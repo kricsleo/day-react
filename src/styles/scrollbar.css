@@ -1,0 +1,12 @@
+*::-webkit-scrollbar {
+  @apply w-0;
+}
+
+*::-webkit-scrollbar-track {
+  @apply rounded;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  @apply rounded;
+}
