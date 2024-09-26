@@ -1,6 +1,6 @@
 import type { ChineseHoliday } from '../src/utils/chinese-days'
 import fs from 'node:fs/promises'
-import glob from 'fast-glob'
+import glob from 'tiny-glob'
 
 interface RawChineseHoliday {
   name: string
@@ -9,10 +9,9 @@ interface RawChineseHoliday {
 }
 
 async function main() {
-  const files = await glob([
-    './chinese-holidays-data/data/*.json',
-    '!**/index.json',
-  ], { absolute: true })
+  const files = await glob('./chinese-holidays-data/data/2*.json', {
+    absolute: true,
+  })
 
   const holidays: ChineseHoliday[] = []
   for await (const file of files) {

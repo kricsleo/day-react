@@ -29,7 +29,7 @@
     "@unocss/preset-rem-to-px": "^0.62.4",
     "@unocss/reset": "^0.62.4",
     "dayjs": "^1.11.13",
-    "fast-glob": "^3.3.2",
+    "tiny-glob": "^0.2.9",
     "tsx": "^4.19.1",
     "typescript": "^5.5.2",
     "unocss": "^0.62.4"
