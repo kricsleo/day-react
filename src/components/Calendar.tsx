@@ -1,13 +1,20 @@
 import { useRef } from 'react'
 import { useDayState } from '../hooks/days'
+import { chunk } from '../utils/chunk'
 import CalendarDay from './CalendarDay'
+import CalenderRow from './CalendarRow'
 import InfiniteLoader from './InfiniteLoader'
 import WeekHeaders from './WeekHeaders'
 
 export default function Calendar() {
   const containerDom = useRef<HTMLDivElement>(null)
-  const days = useDayState(state => state.days)
-  const addPrevDays = useDayState(state => state.addPrevDays)
+
+  // This avoid the infinite loop of rerendering.
+  // Only rerender when the days length changed.
+  const dayIds = useDayState(state => state.days.map(day => day.id).join('❤️'))
+  const dayIdGruops = dayIds ? chunk(dayIds.split('❤️'), 7) : []
+
+  // const addPrevDays = useDayState(state => state.addPrevDays)
   const addNextDays = useDayState(state => state.addNextDays)
 
   return (
@@ -16,11 +23,11 @@ export default function Calendar() {
 
       <div className="h-80vh of-auto">
 
-        <InfiniteLoader name="prev" container={containerDom} onLoad={addPrevDays} />
+        {/* <InfiniteLoader name="prev" container={containerDom} onLoad={addPrevDays} /> */}
 
-        <ul className="grid cols-7">
-          {days.map(day => <CalendarDay key={day.id} id={day.id} />)}
-        </ul>
+        {dayIdGruops.map(group => (
+          <CalenderRow key={group[0]} dayIds={group} />
+        ))}
 
         <InfiniteLoader name="next" container={containerDom} onLoad={addNextDays} />
       </div>

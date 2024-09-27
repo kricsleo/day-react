@@ -1,6 +1,16 @@
-import { addDays, eachDayOfInterval, isToday, nextMonday, previousSunday } from 'date-fns'
+import {
+  addDays,
+  eachDayOfInterval,
+  isToday,
+  nextMonday,
+  previousSunday,
+  startOfWeek,
+  subDays,
+  subWeeks,
+} from 'date-fns'
 import { create } from 'zustand'
-import { isWorkingDay } from '../utils/chinese-days'
+import { devtools } from 'zustand/middleware'
+import { findChineseDay, isWorkingDay } from '../utils/chinese-days'
 
 interface Day {
   id: string
@@ -8,28 +18,28 @@ interface Day {
   working: boolean
   peace: boolean
   today: boolean
+  description?: string
 }
 
 interface DayState {
   days: Day[]
-  addDays: (day: Day[]) => void
+
   addPrevDays: () => void
   addNextDays: () => void
 }
 
 const intervalDays = 7 * 8
 
-export const useDayState = create<DayState>(set => ({
-  days: [],
-  addDays: days => set(state => ({ days: [...state.days, ...days] })),
+export const useDayState = create(devtools<DayState>(set => ({
+  days: genInitialDays(),
 
   addPrevDays: () => set(state => {
     const _firstDate = state.days[0]?.date
     const firstDate = _firstDate || nextMonday(new Date())
 
     const prevDays = eachDayOfInterval({
-      start: addDays(firstDate, -intervalDays),
-      end: addDays(firstDate, -1),
+      start: subDays(firstDate, intervalDays),
+      end: subDays(firstDate, 1),
     }).map(dateToDay)
 
     return { days: [...prevDays, ...state.days] }
@@ -47,15 +57,23 @@ export const useDayState = create<DayState>(set => ({
     return { days: [...state.days, ...nextDays] }
   }),
 
-}))
+})))
+
+function genInitialDays() {
+  const start = startOfWeek(subWeeks(new Date(), 1), { weekStartsOn: 1 })
+  const end = addDays(start, intervalDays - 1)
+  return eachDayOfInterval({ start, end }).map(dateToDay)
+}
 
 function dateToDay(date: Date): Day {
   const working = isWorkingDay(date)
+
   return {
     id: date.toISOString(),
     date,
     working,
     peace: !working,
     today: isToday(date),
+    description: findChineseDay(date)?.[0],
   }
 }

@@ -1,4 +1,4 @@
-import type { ChineseHoliday } from '../src/utils/chinese-days'
+import type { ChineseDay } from '../src/utils/chinese-days'
 import fs from 'node:fs/promises'
 import glob from 'tiny-glob'
 
@@ -13,11 +13,12 @@ async function main() {
     absolute: true,
   })
 
-  const holidays: ChineseHoliday[] = []
+  const holidays: ChineseDay[] = []
   for await (const file of files) {
     const days: RawChineseHoliday[] = (await import(file)).default
     for (const day of days) {
-      holidays.push([day.name, day.range, day.type])
+      const name = day.type === 'holiday' ? day.name : `${day.name}补班`
+      holidays.push([name, day.range, day.type])
     }
   }
 
