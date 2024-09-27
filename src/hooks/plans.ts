@@ -1,4 +1,6 @@
 import {
+  addDays,
+  differenceInDays,
   eachDayOfInterval,
   isWithinInterval,
   max,
@@ -23,6 +25,7 @@ interface PlanState {
   delete: (id: string) => void
 
   editingPlanId: string | null
+  editingType: EditingType | null
   editingPlanArchorDate: Date | null
   editing: (id: string, editingType: EditingType, date: Date) => void
   cancelEditing: () => void
@@ -56,35 +59,48 @@ export const usePlanState = create(devtools<PlanState>((set, get) => ({
   },
 
   editingPlanId: null,
+  editingType: null,
   editingPlanArchorDate: null,
   editing(id: string, editingType: EditingType, date: Date) {
     const { plans } = get()
     const plan = plans.find(p => p.id === id)!
     const editingPlanArchorDate = editingType === 'start' ? plan.range[1]
       : editingType === 'end' ? plan.range[0]
-        : editingType === 'range' ? plan.range[0]
+        : editingType === 'range' ? date
           : date
-    set({ editingPlanId: id, editingPlanArchorDate })
+
+    set({ editingPlanId: id, editingType, editingPlanArchorDate })
   },
   cancelEditing() {
-    set({ editingPlanId: null, editingPlanArchorDate: null })
+    set({ editingPlanId: null, editingType: null, editingPlanArchorDate: null })
   },
   updateEditingPlanDate(date: Date) {
-    const { plans, editingPlanId, editingPlanArchorDate } = get()
+    const { plans, editingPlanId, editingType, editingPlanArchorDate } = get()
     const plan = plans.find(p => p.id === editingPlanId)
     if (!plan || !editingPlanArchorDate) {
       return
     }
 
-    const start = min([date, editingPlanArchorDate])
-    const end = max([date, editingPlanArchorDate])
-    const newPlans = sortPlans(plans.map(p =>
-      p.id === editingPlanId
-        ? { ...p, range: [start, end] }
-        : p,
-    ))
+    if (editingType === 'range') {
+      const offsets = differenceInDays(date, editingPlanArchorDate)
+      const start = addDays(plan.range[0], offsets)
+      const end = addDays(plan.range[1], offsets)
 
-    set({ plans: newPlans })
+      const newPlans = sortPlans(plans.map(p =>
+        p.id === editingPlanId ? { ...p, range: [start, end] } : p,
+      ))
+
+      set({ plans: newPlans, editingPlanArchorDate: date })
+    } else {
+      const start = min([date, editingPlanArchorDate])
+      const end = max([date, editingPlanArchorDate])
+
+      const newPlans = sortPlans(plans.map(p =>
+        p.id === editingPlanId ? { ...p, range: [start, end] } : p,
+      ))
+
+      set({ plans: newPlans })
+    }
   },
 
   activePlanId: null,

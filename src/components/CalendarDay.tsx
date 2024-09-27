@@ -1,7 +1,7 @@
 import cls from 'classnames'
 import { getDate, getMonth } from 'date-fns'
-import { useEffect } from 'react'
 import { useDayState } from '../hooks/days'
+import { useMouseUp } from '../hooks/events'
 import { usePlanState } from '../hooks/plans'
 import HighlightCard from './HighlightCard'
 
@@ -26,15 +26,7 @@ export default function Day(props: { id: string }) {
     updateEditingPlanDate(day.date)
   }
 
-  useEffect(() => {
-    function onMouseUp() {
-      console.log('up', day.date)
-      cancelEditingPlan()
-    }
-
-    window.addEventListener('mouseup', onMouseUp)
-    return () => window.removeEventListener('mouseup', onMouseUp)
-  }, [])
+  useMouseUp(cancelEditingPlan)
 
   return (
     <div
