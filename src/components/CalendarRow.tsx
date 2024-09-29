@@ -9,18 +9,22 @@ export default function CalenderRow(props: {
   dayIds: string[]
   planIds?: string[]
 }) {
-  const startDate = useDayState(state => state.days.find(day => day.id === props.dayIds[0])!.date)
-  const endDate = useDayState(state => state.days.find(day => day.id === props.dayIds[props.dayIds.length - 1])!.date)
+  const startDate = useDayState(state =>
+    state.days.find(day => day.id === props.dayIds[0])!.date,
+  )
+  const endDate = useDayState(state =>
+    state.days.find(day => day.id === props.dayIds[props.dayIds.length - 1])!.date,
+  )
 
-  const plans = usePlanState(useShallow(state =>
-    state.plans.filter(plan => areIntervalsOverlapping({
+  const plans = usePlanState(useShallow(state => {
+    return state.plans.filter(plan => areIntervalsOverlapping({
       start: startDate,
       end: endDate,
     }, {
       start: plan.range[0],
       end: plan.range[1],
-    })),
-  ))
+    }, { inclusive: true }))
+  }))
 
   return (
     <div className="relative">

@@ -1,7 +1,5 @@
 import cls from 'classnames'
-import { addDays, differenceInDays, isAfter, isBefore } from 'date-fns'
-import { useEffect } from 'react'
-import { useMouseUp } from '../hooks/events'
+import { addDays, differenceInDays, isAfter, isBefore, isSameDay } from 'date-fns'
 import { usePlanState } from '../hooks/plans'
 
 export default function CalendarPlan(props: {
@@ -12,8 +10,16 @@ export default function CalendarPlan(props: {
   const plan = usePlanState(state => state.plans.find(plan => plan.id === props.planId)!)
   const hasEditingPlan = usePlanState(state => Boolean(state.editingPlanId))
   const editing = usePlanState(state => state.editingPlanId === props.planId)
-  const cancelEditingPlan = usePlanState(state => state.cancelEditing)
-
+  const editingStart = usePlanState(state => {
+    return editing
+      && isSameDay(plan.range[1], state.editingPlanArchorDate!)
+      && ['start', 'end'].includes(state.editingType!)
+  })
+  const editingEnd = usePlanState(state => {
+    return editing
+      && isSameDay(plan.range[0], state.editingPlanArchorDate!)
+      && ['start', 'end'].includes(state.editingType!)
+  })
   const editingPlan = usePlanState(state => state.editing)
 
   const active = usePlanState(state => state.activePlanId === props.planId)
@@ -34,14 +40,10 @@ export default function CalendarPlan(props: {
     ? `calc(${differenceInDays(props.endDate, plan.range[1]) / 7 * 100}% + 12px)`
     : `0`
 
-  useMouseUp(cancelEditingPlan)
-
   function handlePlanMouseDown(e: React.MouseEvent<HTMLElement>) {
-    const parentWidth = e.currentTarget.offsetWidth
-    const clickX = e.nativeEvent.offsetX
-    const dayOffset = Math.floor((clickX / parentWidth) * 7)
+    const rowDomRect = e.currentTarget.parentElement!.getBoundingClientRect()
+    const dayOffset = Math.floor(((e.pageX - rowDomRect.left) / rowDomRect.width) * 7)
     const currentDate = addDays(props.startDate, dayOffset)
-    console.log('currentDate', currentDate)
     editingPlan(plan.id, 'range', currentDate)
   }
 
@@ -58,7 +60,7 @@ export default function CalendarPlan(props: {
   return (
     <div
       className={cls('absolute bg-primary transition-all op-45', {
-        'rounnded-l': includingStart,
+        'rounded-l': includingStart,
         'rounded-r': includingEnd,
         'pointer-events-none': hasEditingPlan,
         '!op-90': active,
@@ -72,7 +74,11 @@ export default function CalendarPlan(props: {
       {includingStart && (
         <button
           className={cls(
-            'center absolute left-0.5 top-50% text-primary translate--1/2 hover:text-red px-sm py-xs',
+            'center absolute left-0.5 top-50% text-primary translate--1/2 op-0 hover:op-100 px-sm py-xs',
+            {
+              'pointer-events-none': hasEditingPlan && !editingStart,
+              '!op-100': editingStart,
+            },
           )}
           onMouseDown={handlePlanStartMouseDown}
         >
@@ -82,7 +88,11 @@ export default function CalendarPlan(props: {
       {includingEnd && (
         <button
           className={cls(
-            'center absolute right-0.5 top-50% text-primary translate-y--1/2 translate-x-1/2 hover:text-red px-sm py-xs',
+            'center absolute right-0.5 top-50% text-primary translate-y--1/2 translate-x-1/2 op-0 hover:op-100 px-sm py-xs',
+            {
+              'pointer-events-none': hasEditingPlan && !editingEnd,
+              '!op-100': editingEnd,
+            },
           )}
           onMouseDown={handlePlanEndMouseDown}
         >

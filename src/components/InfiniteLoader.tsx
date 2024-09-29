@@ -19,7 +19,6 @@ export default function InfiniteLoader(props: {
       rootMargin: '800px',
     })
     observerManager.observe('loader', domRef.current, () => {
-      console.log('load', props.name)
       props.onLoad()
     })
 

@@ -1,7 +1,7 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useDayState } from '../hooks/days'
+import { usePlanState } from '../hooks/plans'
 import { chunk } from '../utils/chunk'
-import CalendarDay from './CalendarDay'
 import CalenderRow from './CalendarRow'
 import InfiniteLoader from './InfiniteLoader'
 import WeekHeaders from './WeekHeaders'
@@ -16,6 +16,11 @@ export default function Calendar() {
 
   // const addPrevDays = useDayState(state => state.addPrevDays)
   const addNextDays = useDayState(state => state.addNextDays)
+
+  const cancelEditingPlan = usePlanState(state => state.cancelEditing)
+  useEffect(() => {
+    window.addEventListener('mouseup', cancelEditingPlan)
+  }, [])
 
   return (
     <section>

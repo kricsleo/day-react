@@ -72,11 +72,13 @@ export const usePlanState = create(devtools<PlanState>((set, get) => ({
     set({ editingPlanId: id, editingType, editingPlanArchorDate })
   },
   cancelEditing() {
+    console.log('cancelEditing')
     set({ editingPlanId: null, editingType: null, editingPlanArchorDate: null })
   },
   updateEditingPlanDate(date: Date) {
     const { plans, editingPlanId, editingType, editingPlanArchorDate } = get()
     const plan = plans.find(p => p.id === editingPlanId)
+    console.log('updateEditingPlanDate', plan, editingPlanArchorDate)
     if (!plan || !editingPlanArchorDate) {
       return
     }
