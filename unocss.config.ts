@@ -42,6 +42,7 @@ export default defineConfig({
       '3xl': '64px',
     },
     borderRadius: {
+      xs: '4px',
       sm: '6px',
       DEFAULT: '8px',
     },

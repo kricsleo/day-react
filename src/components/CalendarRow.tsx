@@ -20,10 +20,7 @@ export default function CalenderRow(props: {
     return state.plans.filter(plan => areIntervalsOverlapping({
       start: startDate,
       end: endDate,
-    }, {
-      start: plan.range[0],
-      end: plan.range[1],
-    }, { inclusive: true }))
+    }, plan, { inclusive: true }))
   }))
 
   return (

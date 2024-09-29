@@ -12,12 +12,12 @@ export default function CalendarPlan(props: {
   const editing = usePlanState(state => state.editingPlanId === props.planId)
   const editingStart = usePlanState(state => {
     return editing
-      && isSameDay(plan.range[1], state.editingPlanArchorDate!)
+      && isSameDay(plan.end, state.editingPlanArchorDate!)
       && ['start', 'end'].includes(state.editingType!)
   })
   const editingEnd = usePlanState(state => {
     return editing
-      && isSameDay(plan.range[0], state.editingPlanArchorDate!)
+      && isSameDay(plan.start, state.editingPlanArchorDate!)
       && ['start', 'end'].includes(state.editingType!)
   })
   const editingPlan = usePlanState(state => state.editing)
@@ -26,18 +26,18 @@ export default function CalendarPlan(props: {
   const setActive = usePlanState(state => state.active)
   const cancelActive = usePlanState(state => state.cancelActive)
 
-  const includingStart = !isAfter(props.startDate, plan.range[0])
-  const includingEnd = !isBefore(props.endDate, plan.range[1])
+  const includingStart = !isAfter(props.startDate, plan.start)
+  const includingEnd = !isBefore(props.endDate, plan.end)
 
   const height = 20
   const gap = 4
   const bottom = `${Math.max(plan.order * (height + gap)) + 8}px`
 
   const left = includingStart
-    ? `${differenceInDays(plan.range[0], props.startDate) / 7 * 100}%`
+    ? `${differenceInDays(plan.start, props.startDate) / 7 * 100}%`
     : '0'
   const right = includingEnd
-    ? `calc(${differenceInDays(props.endDate, plan.range[1]) / 7 * 100}% + 12px)`
+    ? `calc(${differenceInDays(props.endDate, plan.end) / 7 * 100}% + 12px)`
     : `0`
 
   function handlePlanMouseDown(e: React.MouseEvent<HTMLElement>) {
@@ -49,12 +49,12 @@ export default function CalendarPlan(props: {
 
   function handlePlanStartMouseDown(e: React.MouseEvent<HTMLElement>) {
     e.stopPropagation()
-    editingPlan(plan.id, 'start', plan.range[1])
+    editingPlan(plan.id, 'start', plan.end)
   }
 
   function handlePlanEndMouseDown(e: React.MouseEvent<HTMLElement>) {
     e.stopPropagation()
-    editingPlan(plan.id, 'end', plan.range[0])
+    editingPlan(plan.id, 'end', plan.start)
   }
 
   return (

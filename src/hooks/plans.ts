@@ -12,7 +12,8 @@ import { devtools } from 'zustand/middleware'
 interface Plan {
   id: string
   order: number
-  range: [Date, Date]
+  start: Date
+  end: Date
   description: string
 }
 
@@ -64,32 +65,30 @@ export const usePlanState = create(devtools<PlanState>((set, get) => ({
   editing(id: string, editingType: EditingType, date: Date) {
     const { plans } = get()
     const plan = plans.find(p => p.id === id)!
-    const editingPlanArchorDate = editingType === 'start' ? plan.range[1]
-      : editingType === 'end' ? plan.range[0]
+    const editingPlanArchorDate = editingType === 'start' ? plan.end
+      : editingType === 'end' ? plan.start
         : editingType === 'range' ? date
           : date
 
     set({ editingPlanId: id, editingType, editingPlanArchorDate })
   },
   cancelEditing() {
-    console.log('cancelEditing')
     set({ editingPlanId: null, editingType: null, editingPlanArchorDate: null })
   },
   updateEditingPlanDate(date: Date) {
     const { plans, editingPlanId, editingType, editingPlanArchorDate } = get()
     const plan = plans.find(p => p.id === editingPlanId)
-    console.log('updateEditingPlanDate', plan, editingPlanArchorDate)
     if (!plan || !editingPlanArchorDate) {
       return
     }
 
     if (editingType === 'range') {
       const offsets = differenceInDays(date, editingPlanArchorDate)
-      const start = addDays(plan.range[0], offsets)
-      const end = addDays(plan.range[1], offsets)
+      const start = addDays(plan.start, offsets)
+      const end = addDays(plan.end, offsets)
 
       const newPlans = sortPlans(plans.map(p =>
-        p.id === editingPlanId ? { ...p, range: [start, end] } : p,
+        p.id === editingPlanId ? { ...p, start, end } : p,
       ))
 
       set({ plans: newPlans, editingPlanArchorDate: date })
@@ -98,7 +97,7 @@ export const usePlanState = create(devtools<PlanState>((set, get) => ({
       const end = max([date, editingPlanArchorDate])
 
       const newPlans = sortPlans(plans.map(p =>
-        p.id === editingPlanId ? { ...p, range: [start, end] } : p,
+        p.id === editingPlanId ? { ...p, start, end } : p,
       ))
 
       set({ plans: newPlans })
@@ -119,7 +118,8 @@ function createPlan(start: Date, end?: Date): Plan {
   return {
     id,
     order: 0,
-    range: [start, end || start],
+    start,
+    end: end || start,
     description: '',
   }
 }
@@ -127,19 +127,17 @@ function createPlan(start: Date, end?: Date): Plan {
 function sortPlans(plans: Plan[]): Plan[] {
   return plans.map((plan, idx) => {
     const prevPlans = plans.slice(0, idx)
-    const days = eachDayOfInterval({ start: plan.range[0], end: plan.range[1] })
-    const occupiedOrders: boolean[] = []
+    const days = eachDayOfInterval(plan)
 
+    const occupiedOrders: boolean[] = []
     days.forEach(day => {
-      const plansInCurrentDay = prevPlans.filter(
-        p => isWithinInterval(day, { start: p.range[0], end: p.range[1] }),
-      )
+      const plansInCurrentDay = prevPlans.filter(p => isWithinInterval(day, p))
       plansInCurrentDay.forEach(p => occupiedOrders[p.order] = true)
     })
 
     const avaliableOrder = occupiedOrders.findIndex(order => !order)
-    const order = avaliableOrder === -1 ? occupiedOrders.length : avaliableOrder
+    plan.order = avaliableOrder === -1 ? occupiedOrders.length : avaliableOrder
 
-    return plan.order === order ? plan : { ...plan, order }
+    return plan
   })
 }
