@@ -1,5 +1,9 @@
 import remToPx from '@unocss/preset-rem-to-px'
-import { defineConfig, presetIcons, presetUno } from 'unocss'
+import {
+  defineConfig,
+  presetIcons,
+  presetUno,
+} from 'unocss'
 
 export default defineConfig({
   theme: {
@@ -52,6 +56,7 @@ export default defineConfig({
     ['center', 'flex justify-center items-center'],
     ['x-center', 'flex justify-center'],
     ['x-between', 'flex justify-between'],
+    ['y-center', 'flex items-center'],
     [/^expand-?(.*)$/, ([,size]) => `relative before:content-[""] before:absolute before:inset--${size || 2}`],
   ],
 
@@ -61,6 +66,7 @@ export default defineConfig({
   presets: [
     presetUno(),
     presetIcons({
+      scale: 1.2,
       extraProperties: { display: 'inline-block' },
     }),
     remToPx({ baseFontSize: 4 }),

@@ -12,7 +12,7 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { findChineseDay, isWorkingDay } from '../utils/chinese-days'
 
-interface Day {
+export interface Day {
   id: string
   date: Date
   working: boolean

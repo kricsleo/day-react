@@ -1,14 +1,23 @@
 @import './vars.css';
 @import './scrollbar.css';
+@import './reset.css';
 
 @unocss;
 
 html {
-  @apply bg-background text-foreground;
+  @apply bg-background text-foreground text-md;
+  font-family: 'Geist Sans';
+}
+
+.calendar-row:has(.calendar-plan--animating) {
+  /* 
+    Set current animating row to have a bigger zIndex than prev & next row
+    to make sure the animating plan dom won't be covered by other rows.
+   */
+  z-index: 9
 }
 
 .calendar-day {
-  @apply h-180;
   box-shadow: inset -1px 0 0 hsl(var(--border)), 
     inset 0 -1px 0 hsl(var(--border));
 }
@@ -26,70 +35,4 @@ html {
       transparent 100%
     );
   background-size: 10px 10px;
-}
-
-/* Blobs */
-.blob-cont {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  z-index: -2;
-  overflow: hidden;
-}
-
-
-.blob {
-  border-radius: 50%;
-  filter: blur(30px);
-}
-
-.yellow {
-  background-color: hsl(var(--primary));
-  position: absolute;
-  top: 10%;
-  left: 5%;
-  height: 40%;
-  width: 60%;
-  animation: yellow 8s infinite ease;
-}
-
-.green {
-  background-color: hsl(var(--secondary));
-  position: absolute;
-  top: 16%;
-  right: -4%;
-  height: 30%;
-  width: 30%;
-  animation: green 8s infinite ease;
-}
-
-.red {
-  background-color: hsl(var(--accent));
-  position: absolute;
-  right: 0;
-  top: 60%;
-  height: 60%;
-  width: 60%;
-  animation: red 8s infinite linear;
-}
-
-@keyframes yellow {
-  0% {top: 10%; left: 5%; transform: scale(1);}
-  30% {top: 60%; left: 30%; transform: scale(1.2);}
-  60% {top: 20%; left: 40%; transform: scale(1.3);}
-  100% {top: 10%; left: 5%; transform: scale(1);}
-}
-
-@keyframes green {
-  0% {top: 16%; right: -4%; transform: scale(1.2);}
-  30% {top: 60%; right: -4%;transform: scale(1);}
-  60% {top: 40%; right: 20%;transform: scale(1);}
-  100% {top: 16%; right: -4%; transform: scale(1.2);}
-}
-
-@keyframes red {
-  0% {top: 50%; right: 0; transform: scale(1);}
-  30% {top: 30%; right: 30%;transform: scale(1.4);}
-  60% {top: 50%; right: 20%;transform: scale(1);}
-  100% {top: 50%; right: 0; transform: scale(1);}
 }

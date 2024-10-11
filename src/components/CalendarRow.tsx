@@ -1,44 +1,56 @@
-import { areIntervalsOverlapping } from 'date-fns'
+import {
+  areIntervalsOverlapping,
+  isWithinInterval,
+} from 'date-fns'
+import { AnimatePresence } from 'framer-motion'
 import { useShallow } from 'zustand/react/shallow'
 import { useDayState } from '../hooks/days'
 import { usePlanState } from '../hooks/plans'
 import CalendarDay from './CalendarDay'
 import CalendarPlan from './CalendarPlan'
+import ContextMenu from './ContextMenu'
 
 export default function CalenderRow(props: {
-  dayIds: string[]
-  planIds?: string[]
+  rowId: string
+  startDate: Date
+  endDate: Date
 }) {
-  const startDate = useDayState(state =>
-    state.days.find(day => day.id === props.dayIds[0])!.date,
-  )
-  const endDate = useDayState(state =>
-    state.days.find(day => day.id === props.dayIds[props.dayIds.length - 1])!.date,
-  )
+  const days = useDayState(useShallow(state => state.days.filter(
+    day => isWithinInterval(day.date, {
+      start: props.startDate,
+      end: props.endDate,
+    }),
+  )))
 
   const plans = usePlanState(useShallow(state => {
-    return state.plans.filter(plan => areIntervalsOverlapping({
-      start: startDate,
-      end: endDate,
-    }, plan, { inclusive: true }))
+    return state.plans
+      .filter(plan => areIntervalsOverlapping({
+        start: props.startDate,
+        end: props.endDate,
+      }, plan, { inclusive: true }))
   }))
 
   return (
-    <div className="relative">
+    <div className="calendar-row relative">
       <div className="grid cols-7">
-        { props.dayIds.map(dayId => (
-          <CalendarDay key={dayId} id={dayId} />
+        { days.map(day => (
+          <CalendarDay key={day.id} day={day} />
         ))}
       </div>
 
-      {plans.map(plan => (
-        <CalendarPlan
-          key={plan.id}
-          planId={plan.id}
-          startDate={startDate}
-          endDate={endDate}
-        />
-      ))}
+      <AnimatePresence>
+        {plans.map(plan => (
+          <CalendarPlan
+            key={plan.id}
+            rowId={props.rowId}
+            planId={plan.id}
+            startDate={props.startDate}
+            endDate={props.endDate}
+          />
+        ))}
+      </AnimatePresence>
+
+      <ContextMenu rowId={props.rowId} />
     </div>
   )
 }

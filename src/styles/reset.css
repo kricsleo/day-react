@@ -1,0 +1,7 @@
+/* Reset input */
+input {
+  border: none;
+  outline: none;
+  background: none;
+  box-shadow: none;
+}

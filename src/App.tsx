@@ -1,6 +1,7 @@
 import Calendar from './components/Calendar'
-import './styles/index.css'
 import '@unocss/reset/tailwind.css'
+import '@fontsource/geist-sans/400.css'
+import './styles/index.css'
 
 const App = () => {
   return (

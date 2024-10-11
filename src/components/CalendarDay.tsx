@@ -1,45 +1,53 @@
-import cls from 'classnames'
+import type { Day } from '../hooks/days'
+import cls from 'clsx'
 import { getDate, getMonth } from 'date-fns'
-import { useDayState } from '../hooks/days'
+import { useShallow } from 'zustand/shallow'
+import { useContextMenuState } from '../hooks/contextMenu'
 import { usePlanState } from '../hooks/plans'
-import HighlightCard from './HighlightCard'
+import { isLeftClick } from '../utils/events'
+import { pick } from '../utils/utils'
 
-export default function Day(props: { id: string }) {
-  const day = useDayState(state => state.days.find(day => day.id === props.id)!)
-  const date = getDate(day.date)
-  const month = getMonth(day.date) + 1
+export default function CalendarDay(props: { day: Day }) {
+  const planState = usePlanState(useShallow(state => pick(
+    state,
+    ['createPlan', 'updateEditingPlanDate', 'editPlan'],
+  )))
 
-  const createPlan = usePlanState(state => state.create)
-  const updateEditingPlanDate = usePlanState(state => state.updateEditingPlanDate)
-  const editingPlan = usePlanState(state => state.editing)
+  const closeContextMenu = useContextMenuState(state => state.close)
 
-  function handleMouseDown() {
-    const plan = createPlan(day.date)
-    editingPlan(plan.id, 'end', day.date)
+  const date = getDate(props.day.date)
+  const month = getMonth(props.day.date) + 1
+
+  function handleMouseDown(e: React.MouseEvent) {
+    if (!isLeftClick(e)) {
+      return
+    }
+
+    const plan = planState.createPlan(props.day.date)
+    planState.editPlan(plan.id, 'end', props.day.date)
+    closeContextMenu()
   }
 
   function onMouseEnter() {
-    updateEditingPlanDate(day.date)
+    planState.updateEditingPlanDate(props.day.date)
   }
 
   return (
     <div
-      className={cls('calendar-day', {
-        'calendar-day--peace': day.peace,
+      className={cls('calendar-day h-100', {
+        'calendar-day--peace': props.day.peace,
       })}
       onMouseDown={handleMouseDown}
       onMouseEnter={onMouseEnter}
     >
-      {/* { day.today && <HighlightCard />} */}
-
       <div className="center py-sm">
         <span className={cls('center px-sm select-none', {
-          'bg-primary text-primary rounded-sm': day.today,
+          'bg-primary text-primary rounded-sm': props.day.today,
         })}
         >
           <span className="ws-nowrap">{month}月{date}</span>
-          {day.today && <span className="ws-nowrap text-sm">&nbsp;(今天)</span>}
-          {day.description && <span className="ws-nowrap vertical-baseline text-sm">&nbsp;({day.description})</span>}
+          {props.day.today && <span className="ws-nowrap text-sm">&nbsp;(今天)</span>}
+          {props.day.description && <span className="ws-nowrap vertical-baseline text-sm">&nbsp;({props.day.description})</span>}
         </span>
       </div>
     </div>

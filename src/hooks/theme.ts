@@ -17,11 +17,3 @@ export const useTheme = create(persist<ThemeState>(set => ({
 }), {
   name: 'theme',
 }))
-
-export function initTheme() {
-
-}
-
-export function setTheme(theme: Theme) {
-  document.documentElement.classList.add(theme)
-}

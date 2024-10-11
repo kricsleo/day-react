@@ -2,12 +2,15 @@ import {
   addDays,
   differenceInDays,
   eachDayOfInterval,
+  isBefore,
+  isSameDay,
   isWithinInterval,
   max,
   min,
 } from 'date-fns'
 import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { devtools, subscribeWithSelector } from 'zustand/middleware'
+import { type Color, pickColor } from './colors'
 
 interface Plan {
   id: string
@@ -15,103 +18,104 @@ interface Plan {
   start: Date
   end: Date
   description: string
+  color: Color
 }
 
 type EditingType = 'start' | 'end' | 'range'
 
 interface PlanState {
   plans: Plan[]
-  create: (start: Date) => Plan
-  update: (id: string, plan: Partial<Plan>) => void
-  delete: (id: string) => void
+  createPlan: (start: Date) => Plan
+  updatePlan: (planId: string, plan: Partial<Plan>) => void
+  deletePlan: (planId: string) => void
 
   editingPlanId: string | null
   editingType: EditingType | null
-  editingPlanArchorDate: Date | null
-  editing: (id: string, editingType: EditingType, date: Date) => void
-  cancelEditing: () => void
+  editingDirection: 'before' | 'after' | null
+  editingArchorDate: Date | null
+  editPlan: (planId: string, editingType: EditingType, date: Date) => void
+  cancelEditPlan: () => void
   updateEditingPlanDate: (date: Date) => void
 
   activePlanId: string | null
-  active: (id: string) => void
-  cancelActive: () => void
+  activePlan: (planId: string) => void
+  deactivePlan: () => void
 }
 
-export const usePlanState = create(devtools<PlanState>((set, get) => ({
+export const usePlanState = create(devtools(subscribeWithSelector<PlanState>((set, get) => ({
   plans: [],
-
-  create(start: Date) {
+  createPlan(start: Date) {
     const plan = createPlan(start)
     const plans = sortPlans([...get().plans, plan])
     set({ plans })
     return plan
   },
-  update(id: string, plan: Partial<Plan>) {
-    const plans = get().plans.map(p => (p.id === id ? { ...p, ...plan } : p))
+  updatePlan(planId: string, plan: Partial<Plan>) {
+    const plans = get().plans.map(p => (p.id === planId ? { ...p, ...plan } : p))
     set({ plans })
   },
-  delete(id: string) {
-    const plan = get().plans.find(p => p.id === id)
-    if (!plan) {
-      return
-    }
-    const plans = sortPlans(get().plans.filter(p => p.id !== id))
+  deletePlan(planId: string) {
+    const plans = sortPlans(get().plans.filter(p => p.id !== planId))
     set({ plans })
   },
 
   editingPlanId: null,
   editingType: null,
-  editingPlanArchorDate: null,
-  editing(id: string, editingType: EditingType, date: Date) {
+  editingDirection: null,
+  editingArchorDate: null,
+  editPlan(planId: string, editingType: EditingType, date: Date) {
     const { plans } = get()
-    const plan = plans.find(p => p.id === id)!
-    const editingPlanArchorDate = editingType === 'start' ? plan.end
+    const plan = plans.find(p => p.id === planId)!
+    const editingArchorDate = editingType === 'start' ? plan.end
       : editingType === 'end' ? plan.start
         : editingType === 'range' ? date
           : date
 
-    set({ editingPlanId: id, editingType, editingPlanArchorDate })
+    set({ editingPlanId: planId, editingType, editingDirection: null, editingArchorDate })
   },
-  cancelEditing() {
-    set({ editingPlanId: null, editingType: null, editingPlanArchorDate: null })
+  cancelEditPlan() {
+    set({ editingPlanId: null, editingType: null, editingDirection: null, editingArchorDate: null })
   },
-  updateEditingPlanDate(date: Date) {
-    const { plans, editingPlanId, editingType, editingPlanArchorDate } = get()
+  updateEditingPlanDate(nextArchorDate: Date) {
+    const { plans, editingPlanId, editingType, editingArchorDate: editingPlanArchorDate } = get()
     const plan = plans.find(p => p.id === editingPlanId)
-    if (!plan || !editingPlanArchorDate) {
+
+    if (!plan || !editingPlanArchorDate || isSameDay(editingPlanArchorDate, nextArchorDate)) {
       return
     }
 
     if (editingType === 'range') {
-      const offsets = differenceInDays(date, editingPlanArchorDate)
+      const offsets = differenceInDays(nextArchorDate, editingPlanArchorDate)
+      const editingDirection = offsets > 0 ? 'after' : 'before'
+
       const start = addDays(plan.start, offsets)
       const end = addDays(plan.end, offsets)
-
-      const newPlans = sortPlans(plans.map(p =>
+      const nextPlans = sortPlans(plans.map(p =>
         p.id === editingPlanId ? { ...p, start, end } : p,
       ))
 
-      set({ plans: newPlans, editingPlanArchorDate: date })
+      set({ plans: nextPlans, editingArchorDate: nextArchorDate, editingDirection })
     } else {
-      const start = min([date, editingPlanArchorDate])
-      const end = max([date, editingPlanArchorDate])
+      const start = min([nextArchorDate, editingPlanArchorDate])
+      const end = max([nextArchorDate, editingPlanArchorDate])
+      const editingDirection = isBefore(start, plan.start) || isBefore(end, plan.end) ? 'before' : 'after'
 
-      const newPlans = sortPlans(plans.map(p =>
+      const nextPlans = sortPlans(plans.map(p =>
         p.id === editingPlanId ? { ...p, start, end } : p,
       ))
 
-      set({ plans: newPlans })
+      set({ plans: nextPlans, editingDirection })
     }
   },
 
   activePlanId: null,
-  active(id: string) {
-    set({ activePlanId: id })
+  activePlan(planId: string) {
+    set({ activePlanId: planId })
   },
-  cancelActive() {
+  deactivePlan() {
     set({ activePlanId: null })
   },
-})))
+}))))
 
 function createPlan(start: Date, end?: Date): Plan {
   const id = Math.random().toString(36).slice(2)
@@ -121,6 +125,7 @@ function createPlan(start: Date, end?: Date): Plan {
     start,
     end: end || start,
     description: '',
+    color: pickColor(),
   }
 }
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useDayState } from '../hooks/days'
 import { usePlanState } from '../hooks/plans'
-import { chunk } from '../utils/chunk'
+import { chunk } from '../utils/utils'
 import CalenderRow from './CalendarRow'
 import InfiniteLoader from './InfiniteLoader'
 import WeekHeaders from './WeekHeaders'
@@ -9,32 +9,36 @@ import WeekHeaders from './WeekHeaders'
 export default function Calendar() {
   const containerDom = useRef<HTMLDivElement>(null)
 
-  // This avoid the infinite loop of rerendering.
-  // Only rerender when the days length changed.
-  const dayIds = useDayState(state => state.days.map(day => day.id).join('❤️'))
-  const dayIdGruops = dayIds ? chunk(dayIds.split('❤️'), 7) : []
+  const dayState = useDayState()
+  const weeks = chunk(dayState.days, 7)
 
-  // const addPrevDays = useDayState(state => state.addPrevDays)
-  const addNextDays = useDayState(state => state.addNextDays)
-
-  const cancelEditingPlan = usePlanState(state => state.cancelEditing)
+  const cancelEditPlan = usePlanState(state => state.cancelEditPlan)
   useEffect(() => {
-    window.addEventListener('mouseup', cancelEditingPlan)
+    window.addEventListener('mouseup', cancelEditPlan)
   }, [])
 
   return (
-    <section>
+    <section onContextMenu={e => e.preventDefault()}>
       <WeekHeaders />
 
-      <div className="h-80vh of-auto">
+      <div className="h-100vh of-x-hidden of-y-auto">
 
         {/* <InfiniteLoader name="prev" container={containerDom} onLoad={addPrevDays} /> */}
 
-        {dayIdGruops.map(group => (
-          <CalenderRow key={group[0]} dayIds={group} />
+        {weeks.map(week => (
+          <CalenderRow
+            key={week[0]!.id}
+            rowId={week[0]!.id}
+            startDate={week[0]!.date}
+            endDate={week[week.length - 1]!.date}
+          />
         ))}
 
-        <InfiniteLoader name="next" container={containerDom} onLoad={addNextDays} />
+        <InfiniteLoader
+          name="next"
+          container={containerDom}
+          onLoad={dayState.addNextDays}
+        />
       </div>
     </section>
   )
