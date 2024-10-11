@@ -8,13 +8,12 @@ import {
 export default defineConfig({
   theme: {
     fontSize: {
-      'xs': ['10px', '12px'],
-      'sm': ['12px', '16px'],
-      'md': ['14px', '20px'],
-      'lg': ['16px', '24px'],
-      'xl': ['18px', '28px'],
-      '2xl': ['20px', '28px'],
-      '3xl': ['24px', '32px'],
+      'xs': ['12px', '16px'],
+      'sm': ['14px', '20px'],
+      'md': ['16px', '24px'],
+      'lg': ['18px', '28px'],
+      'xl': ['20px', '28px'],
+      '2xl': ['24px', '32px'],
     },
     colors: {
       foreground: 'hsl(var(--foreground))',

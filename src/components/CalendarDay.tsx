@@ -34,7 +34,7 @@ export default function CalendarDay(props: { day: Day }) {
 
   return (
     <div
-      className={cls('calendar-day h-100', {
+      className={cls('calendar-day h-160', {
         'calendar-day--peace': props.day.peace,
       })}
       onMouseDown={handleMouseDown}

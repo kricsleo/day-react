@@ -74,7 +74,7 @@ export default function CalendarPlan(props: {
     ? `${(differenceInDays(props.endDate, planState.plan.end) / 7 + 0.01) * 100}%`
     : `0`
 
-  const opacity = planState.editing || planState.active ? 1 : 0.45
+  const opacity = planState.editing || planState.active ? 1 : 0.65
   const initial = planState.editingDirection === 'before'
     ? { left: '100%', right: '0', bottom }
     : planState.editingDirection === 'after'
