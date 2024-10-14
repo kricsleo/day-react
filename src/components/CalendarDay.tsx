@@ -13,19 +13,23 @@ export default function CalendarDay(props: { day: Day }) {
     ['createPlan', 'updateEditingPlanDate', 'editPlan'],
   )))
 
-  const closeContextMenu = useContextMenuState(state => state.close)
+  const contextMenuState = useContextMenuState(useShallow(state => ({
+    close: state.close,
+    opened: Boolean(state.planId),
+  })))
 
   const date = getDate(props.day.date)
   const month = getMonth(props.day.date) + 1
 
   function handleMouseDown(e: React.MouseEvent) {
-    if (!isLeftClick(e)) {
+    contextMenuState.close()
+
+    if (!isLeftClick(e) || contextMenuState.opened) {
       return
     }
 
     const plan = planState.createPlan(props.day.date)
     planState.editPlan(plan.id, 'end', props.day.date)
-    closeContextMenu()
   }
 
   function onMouseEnter() {
@@ -34,7 +38,8 @@ export default function CalendarDay(props: { day: Day }) {
 
   return (
     <div
-      className={cls('calendar-day h-160', {
+      id={props.day.today ? 'today' : undefined}
+      className={cls('calendar-day', {
         'calendar-day--peace': props.day.peace,
       })}
       onMouseDown={handleMouseDown}
@@ -45,8 +50,8 @@ export default function CalendarDay(props: { day: Day }) {
           'bg-primary text-primary rounded-sm': props.day.today,
         })}
         >
-          <span className="ws-nowrap">{month}月{date}</span>
-          {props.day.today && <span className="ws-nowrap text-sm">&nbsp;(今天)</span>}
+          <span className="ws-nowrap text-lg">{month}月{date}</span>
+          {props.day.today && <span className="ws-nowrap text-sm">&nbsp;(今日)</span>}
           {props.day.description && <span className="ws-nowrap vertical-baseline text-sm">&nbsp;({props.day.description})</span>}
         </span>
       </div>

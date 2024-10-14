@@ -10,6 +10,7 @@ import {
 } from 'date-fns'
 import { create } from 'zustand'
 import { devtools, subscribeWithSelector } from 'zustand/middleware'
+import { shallow } from 'zustand/shallow'
 import { type Color, pickColor } from './colors'
 
 interface Plan {
@@ -116,6 +117,14 @@ export const usePlanState = create(devtools(subscribeWithSelector<PlanState>((se
     set({ activePlanId: null })
   },
 }))))
+
+usePlanState.subscribe(state => [state.editingPlanId, state.editingType], ([editingPlanId, editingType]) => {
+  if (!editingPlanId || !editingType) {
+    document.body.style.cursor = ''
+  } else {
+    document.body.style.cursor = editingType === 'range' ? 'move' : 'ew-resize'
+  }
+}, { equalityFn: shallow })
 
 function createPlan(start: Date, end?: Date): Plan {
   const id = Math.random().toString(36).slice(2)

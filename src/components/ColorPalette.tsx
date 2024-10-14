@@ -1,4 +1,4 @@
-import clsx from 'clsx'
+import { motion } from 'framer-motion'
 import { type Color, useColors } from '../hooks/colors'
 
 export default function ColorPalette(props: {
@@ -8,21 +8,25 @@ export default function ColorPalette(props: {
   const colors = useColors()
 
   return (
-    <div className="grid grid-cols-6 justify-center gap-md p-xs">
+    <div className="flex flex-wrap justify-center gap-xs p-xs">
       {colors.map(color => (
-        <button
+        <motion.button
           key={color.value}
-          className={clsx(
-            'justify-self-center rounded p-sm hover:bg-accent/65 transition-colors',
-            { '!bg-accent': props.color === color.color },
-          )}
+          className="relative justify-self-center rounded p-sm transition-colors hover:bg-accent/65"
           onClick={e => {
             e.stopPropagation()
             props.onChange(color.color)
           }}
         >
-          <div className="h-12 w-12 rounded-full" style={{ backgroundColor: color.value }} />
-        </button>
+          {props.color === color.color && (
+            <motion.div
+              layoutId="color-palette-selected"
+              className="absolute inset-0 h-full w-full rounded bg-accent"
+              transition={{ duration: 0.15 }}
+            />
+          )}
+          <div className="relative z-1 h-12 w-12 rounded-full" style={{ backgroundColor: color.value }} />
+        </motion.button>
       ))}
     </div>
   )

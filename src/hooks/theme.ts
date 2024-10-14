@@ -1,19 +1,20 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
 
-type Theme = 'light' | 'dark' | 'auto'
+type Theme = 'light' | 'dark'
 
 interface ThemeState {
   theme: Theme
-  setTheme: (theme: Theme) => void
+  toggleTheme: () => void
 }
 
-export const useTheme = create(persist<ThemeState>(set => ({
-  theme: 'auto',
-  setTheme: theme => {
+export const useTheme = create<ThemeState>((set, get) => ({
+  theme: 'dark',
+  toggleTheme: () => {
+    const theme = get().theme === 'dark' ? 'light' : 'dark'
     set({ theme })
+
+    document.documentElement.classList.remove('light', 'dark')
     document.documentElement.classList.add(theme)
+    localStorage.setItem('theme', theme)
   },
-}), {
-  name: 'theme',
 }))

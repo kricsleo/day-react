@@ -16,10 +16,8 @@ const colors = [
   'indigo',
   'violet',
   'purple',
-  'fuchsia',
   'pink',
   'rose',
-  'neutral',
 ] satisfies Array<keyof typeof colorPalette>
 
 export type Color = typeof colors[number]

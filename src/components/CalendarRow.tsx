@@ -29,10 +29,12 @@ export default function CalenderRow(props: {
         end: props.endDate,
       }, plan, { inclusive: true }))
   }))
+  const maxPlanOrder = plans.reduce((max, plan) => Math.max(max, plan.order), 0)
+  const height = Math.max(160, maxPlanOrder * 20 + 120)
 
   return (
     <div className="calendar-row relative">
-      <div className="grid cols-7">
+      <div className="grid cols-7 transition-height" style={{ height }}>
         { days.map(day => (
           <CalendarDay key={day.id} day={day} />
         ))}

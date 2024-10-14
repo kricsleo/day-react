@@ -18,12 +18,16 @@ export default function Calendar() {
   }, [])
 
   return (
-    <section onContextMenu={e => e.preventDefault()}>
+    <main className="h-screen flex grow-1 flex-col" onContextMenu={e => e.preventDefault()}>
       <WeekHeaders />
 
-      <div className="h-100vh of-x-hidden of-y-auto">
+      <div className="grow-1 of-x-hidden of-y-auto">
 
-        {/* <InfiniteLoader name="prev" container={containerDom} onLoad={addPrevDays} /> */}
+        <InfiniteLoader
+          name="prev"
+          container={containerDom}
+          onLoad={dayState.addPrevDays}
+        />
 
         {weeks.map(week => (
           <CalenderRow
@@ -40,6 +44,6 @@ export default function Calendar() {
           onLoad={dayState.addNextDays}
         />
       </div>
-    </section>
+    </main>
   )
 }

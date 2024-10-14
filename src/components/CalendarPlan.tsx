@@ -1,11 +1,13 @@
 import cls from 'clsx'
-import { addDays, differenceInDays, isAfter, isBefore, isSameDay } from 'date-fns'
+import { addDays, differenceInDays, eachDayOfInterval, isAfter, isBefore, isSameDay } from 'date-fns'
 import { motion } from 'framer-motion'
 import { useRef } from 'react'
 import { useShallow } from 'zustand/shallow'
 import { pickColor, useColorValue } from '../hooks/colors'
 import { useContextMenuState } from '../hooks/contextMenu'
+import { useHourState } from '../hooks/hours'
 import { usePlanState } from '../hooks/plans'
+import { isWorkingDay } from '../utils/chinese-days'
 import { isLeftClick } from '../utils/events'
 import { pick } from '../utils/utils'
 
@@ -20,23 +22,15 @@ export default function CalendarPlan(props: {
     hasEditingPlan: Boolean(state.editingPlanId),
     active: state.activePlanId === props.planId,
     editing: state.editingPlanId === props.planId,
-    ...pick(state, ['editingDirection', 'editPlan', 'activePlan', 'deactivePlan']),
+    ...pick(state, ['editingDirection', 'editPlan', 'cancelEditPlan', 'activePlan', 'deactivePlan']),
   })))
 
-  const editingStart = usePlanState(state => {
-    return planState.plan && planState.editing
-      && state.editingArchorDate && isSameDay(planState.plan.end, state.editingArchorDate)
-      && state.editingType && ['start', 'end'].includes(state.editingType)
-  })
-  const editingEnd = usePlanState(state => {
-    return planState.plan && planState.editing
-      && state.editingArchorDate && isSameDay(planState.plan.start, state.editingArchorDate)
-      && state.editingType && ['start', 'end'].includes(state.editingType)
-  })
+  const contextMenuState = useContextMenuState(useShallow(state => ({
+    opened: Boolean(state.planId),
+    ...pick(state, ['planId', 'open', 'close', 'setStyle']),
+  })))
 
-  const contextMenuState = useContextMenuState(useShallow(state =>
-    pick(state, ['planId', 'open', 'close', 'setStyle']),
-  ))
+  const hoursPerDay = useHourState(state => state.hour)
 
   const backgroundColor = useColorValue(planState.plan?.color || pickColor())
 
@@ -45,6 +39,10 @@ export default function CalendarPlan(props: {
   if (!planState.plan) {
     return null
   }
+
+  const days = eachDayOfInterval({ start: planState.plan.start, end: planState.plan.end })
+  const workingDays = days.filter(day => isWorkingDay(day)).length
+  const workingHours = workingDays * hoursPerDay
 
   function handleMouseEnter() {
     if (!contextMenuState.planId) {
@@ -74,7 +72,7 @@ export default function CalendarPlan(props: {
     ? `${(differenceInDays(props.endDate, planState.plan.end) / 7 + 0.01) * 100}%`
     : `0`
 
-  const opacity = planState.editing || planState.active ? 1 : 0.65
+  const opacity = planState.editing || planState.active ? 1 : 0.85
   const initial = planState.editingDirection === 'before'
     ? { left: '100%', right: '0', bottom }
     : planState.editingDirection === 'after'
@@ -99,13 +97,16 @@ export default function CalendarPlan(props: {
     if (!isLeftClick(e)) {
       return
     }
-
-    const rowDomRect = e.currentTarget.parentElement!.getBoundingClientRect()
-    const dayOffset = Math.floor(((e.pageX - rowDomRect.left) / rowDomRect.width) * 7)
-    const currentDate = addDays(props.startDate, dayOffset)
-    planState.editPlan(planState.plan!.id, 'range', currentDate)
-
-    contextMenuState.close()
+    if (contextMenuState.opened) {
+      contextMenuState.close()
+      planState.cancelEditPlan()
+      planState.deactivePlan()
+    } else {
+      const rowDomRect = e.currentTarget.parentElement!.getBoundingClientRect()
+      const dayOffset = Math.floor(((e.pageX - rowDomRect.left) / rowDomRect.width) * 7)
+      const currentDate = addDays(props.startDate, dayOffset)
+      planState.editPlan(planState.plan!.id, 'range', currentDate)
+    }
   }
 
   function handlePlanStartMouseDown(e: React.MouseEvent<HTMLElement>) {
@@ -135,21 +136,21 @@ export default function CalendarPlan(props: {
     const preferBottom = e.clientY < window.innerHeight - 300
 
     planState.activePlan(props.planId)
-    contextMenuState.open(props.planId, props.rowId)
     contextMenuState.setStyle({
       top: preferBottom ? `${e.currentTarget.offsetTop}px` : 'auto',
       right: preferRight ? 'auto' : `${e.currentTarget.parentElement!.offsetWidth - e.nativeEvent.offsetX - e.currentTarget.offsetLeft + 20}px`,
       left: preferRight ? `${e.currentTarget.offsetLeft + e.nativeEvent.offsetX + 20}px` : 'auto',
       bottom: preferBottom ? 'auto' : `${e.currentTarget.parentElement!.offsetHeight - e.currentTarget.offsetTop - e.currentTarget.offsetHeight}px`,
     })
+    contextMenuState.open(props.planId, props.rowId)
   }
 
   return (
     <motion.div
       ref={domRef}
-      className={cls('absolute transition-[colors,opacity]', {
-        'rounded-l': includingStart,
-        'rounded-r': includingEnd,
+      className={cls('y-center absolute transition-[colors,opacity] cursor-move px-xs select-none', {
+        'rounded-l-xs border-l-8 border-accent': includingStart,
+        'rounded-r-xs': includingEnd,
         'pointer-events-none': planState.hasEditingPlan,
       })}
       initial={initial}
@@ -165,33 +166,25 @@ export default function CalendarPlan(props: {
       onLayoutAnimationComplete={handleLayoutAnimationComplete}
     >
       {includingStart && (
-        <button
-          className={cls(
-            'center absolute left-0.5 top-50% text-primary translate--1/2 op-0 hover:op-100 px-sm py-xs',
-            {
-              'pointer-events-none': planState.hasEditingPlan && !editingStart,
-              '!op-100': editingStart,
-            },
-          )}
-          onMouseDown={handlePlanStartMouseDown}
-        >
-          <i className="i-ph:arrows-out-line-horizontal-fill" />
-        </button>
+        <>
+          <button
+            className="absolute left--10 top--25% h-150% w-60 cursor-ew-resize"
+            onMouseDown={handlePlanStartMouseDown}
+          />
+          <span>{workingDays}d ({workingHours}h)</span>
+          {planState.plan.description ? (
+            <span>{ planState.plan.description }</span>
+          ) : null}
+        </>
       )}
+
       {includingEnd && (
         <button
-          className={cls(
-            'center absolute right-0.5 top-50% text-primary translate-y--1/2 translate-x-1/2 op-0 hover:op-100 px-sm py-xs',
-            {
-              'pointer-events-none': planState.hasEditingPlan && !editingEnd,
-              '!op-100': editingEnd,
-            },
-          )}
+          className="absolute right--10 top--25% h-150% w-60 cursor-ew-resize"
           onMouseDown={handlePlanEndMouseDown}
-        >
-          <i className="i-ph:arrows-out-line-horizontal-fill" />
-        </button>
+        />
       )}
+      <span></span>
     </motion.div>
   )
 }

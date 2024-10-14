@@ -5,7 +5,7 @@
 @unocss;
 
 html {
-  @apply bg-background text-foreground text-md;
+  @apply bg-background text-foreground text-md tabular-nums;
   font-family: 'Geist Sans';
 }
 

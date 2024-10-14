@@ -47,7 +47,7 @@ export default function ContextMenu(props: { rowId: string }) {
       { planState.plan && opened ? (
         <motion.div
           layoutId="plan-context-menu"
-          className="absolute z-9 w-220 border rounded bg-popover p-xs shadow-md"
+          className="absolute z-9 w-270 select-none border rounded bg-popover p-xs shadow-md"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           style={contextMenuState.style}
