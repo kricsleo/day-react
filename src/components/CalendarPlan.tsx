@@ -72,7 +72,7 @@ export default function CalendarPlan(props: {
     ? `${(differenceInDays(props.endDate, planState.plan.end) / 7 + 0.01) * 100}%`
     : `0`
 
-  const opacity = planState.editing || planState.active ? 1 : 0.85
+  const opacity = planState.editing || planState.active ? 1 : 0.75
   const initial = planState.editingDirection === 'before'
     ? { left: '100%', right: '0', bottom }
     : planState.editingDirection === 'after'
@@ -132,8 +132,8 @@ export default function CalendarPlan(props: {
   function handlePlanContextMenu(e: React.MouseEvent<HTMLDivElement>) {
     e.preventDefault()
 
-    const preferRight = e.clientX < window.innerWidth - 300
-    const preferBottom = e.clientY < window.innerHeight - 300
+    const preferRight = e.clientX < window.innerWidth - 500
+    const preferBottom = e.clientY < window.innerHeight - 500
 
     planState.activePlan(props.planId)
     contextMenuState.setStyle({
@@ -168,19 +168,19 @@ export default function CalendarPlan(props: {
       {includingStart && (
         <>
           <button
-            className="absolute left--10 top--25% h-150% w-60 cursor-ew-resize"
+            className="absolute left--15 top--25% h-150% w-35 cursor-ew-resize"
             onMouseDown={handlePlanStartMouseDown}
           />
           <span>{workingDays}d ({workingHours}h)</span>
           {planState.plan.description ? (
-            <span>{ planState.plan.description }</span>
+            <span>: { planState.plan.description }</span>
           ) : null}
         </>
       )}
 
       {includingEnd && (
         <button
-          className="absolute right--10 top--25% h-150% w-60 cursor-ew-resize"
+          className="absolute right--15 top--25% h-150% w-35 cursor-ew-resize"
           onMouseDown={handlePlanEndMouseDown}
         />
       )}

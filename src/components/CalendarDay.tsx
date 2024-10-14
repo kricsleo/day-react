@@ -38,7 +38,7 @@ export default function CalendarDay(props: { day: Day }) {
 
   return (
     <div
-      id={props.day.today ? 'today' : undefined}
+      id={props.day.id}
       className={cls('calendar-day', {
         'calendar-day--peace': props.day.peace,
       })}

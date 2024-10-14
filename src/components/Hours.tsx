@@ -40,7 +40,7 @@ export default function Hours() {
         />
       </div>
 
-      <span>hours / day</span>
+      <span>hours/day</span>
     </div>
   )
 }

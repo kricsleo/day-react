@@ -69,11 +69,15 @@ function dateToDay(date: Date): Day {
   const working = isWorkingDay(date)
 
   return {
-    id: date.toISOString(),
+    id: getDateId(date),
     date,
     working,
     peace: !working,
     today: isToday(date),
     description: findChineseDay(date)?.[0],
   }
+}
+
+export function getDateId(date: Date) {
+  return date.toISOString().slice(0, 10)
 }

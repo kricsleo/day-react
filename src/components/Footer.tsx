@@ -1,22 +1,22 @@
+import { scrollToDay } from '../utils/scroll'
 import Hours from './Hours'
-import Theme from './Theme'
+import Minimap from './Minimap'
 
 export default function Footer() {
   const today = new Date()
   const month = today.getMonth() + 1
   const date = today.getDate()
 
-  function handleGoToday() {
-    const target = document.getElementById('today')!.parentElement!.parentElement!
-      .previousElementSibling!.previousElementSibling!
-    target.scrollIntoView({ block: 'start', behavior: 'smooth' })
-  }
-
   return (
-    <footer className="flex flex-col items-start justify-center gap-xl p-xl">
+    <footer className="flex flex-col items-start gap-xl p-xl pt-48">
+
+      <Minimap />
+
+      <hr className="my-xs mt-auto h-1 self-stretch bg-muted" />
+
       <button
         className="center rounded-sm bg-secondary px-md py-xs text-primary text-secondary-foreground shadow-sm transition-colors hover:bg-secondary/80"
-        onClick={handleGoToday}
+        onClick={() => scrollToDay(new Date())}
         title="滚动日期到今日"
       >
         <i className="i-ph:calendar-dot mr-sm" />
@@ -25,8 +25,6 @@ export default function Footer() {
       </button>
 
       <Hours />
-
-      <Theme />
     </footer>
   )
 }

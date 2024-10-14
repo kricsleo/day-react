@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { useContextMenuState } from '../hooks/contextMenu'
 import { usePlanState } from '../hooks/plans'
@@ -56,6 +56,7 @@ export default function ContextMenu(props: { rowId: string }) {
           onClick={e => e.stopPropagation()}
         >
           <input
+            autoFocus={!planState.plan.description}
             className="w-full px-sm py-xs text-md"
             placeholder="计划做些什么..."
             value={planState.plan.description}

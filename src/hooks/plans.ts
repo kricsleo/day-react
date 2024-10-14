@@ -13,7 +13,7 @@ import { devtools, subscribeWithSelector } from 'zustand/middleware'
 import { shallow } from 'zustand/shallow'
 import { type Color, pickColor } from './colors'
 
-interface Plan {
+export interface Plan {
   id: string
   order: number
   start: Date
