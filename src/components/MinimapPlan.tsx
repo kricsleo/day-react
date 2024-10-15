@@ -21,7 +21,7 @@ export default function MinimapPlan(props: { plan: Plan }) {
   const workingDays = planDays.filter(day => isWorkingDay(day)).length
   const workingHours = workingDays * hoursPerDay
 
-  const opacity = planState.editing || planState.active ? 1 : 0.65
+  const opacity = planState.editing || planState.active ? 1 : 0.85
   const backgroundColor = useColorValue(props.plan?.color || pickColor())
 
   const hoursDescription = `${workingDays}d (${workingHours}h)`
