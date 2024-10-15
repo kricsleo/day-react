@@ -1,6 +1,5 @@
 import Calendar from './components/Calendar'
-import Footer from './components/Footer'
-import Theme from './components/Theme'
+import Sidebar from './components/Sidebar'
 import '@unocss/reset/tailwind.css'
 import '@fontsource/geist-sans/400.css'
 import './styles/index.css'
@@ -9,9 +8,7 @@ const App = () => {
   return (
     <div className="flex">
       <Calendar />
-      <Footer />
-
-      {/* <Theme /> */}
+      <Sidebar />
     </div>
   )
 }

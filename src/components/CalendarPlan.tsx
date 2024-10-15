@@ -148,7 +148,7 @@ export default function CalendarPlan(props: {
   return (
     <motion.div
       ref={domRef}
-      className={cls('y-center absolute transition-[colors,opacity] cursor-move px-xs select-none', {
+      className={cls('y-center absolute transition-[colors,opacity] cursor-move px-xs select-none ws-nowrap truncate', {
         'rounded-l-xs border-l-8 border-accent': includingStart,
         'rounded-r-xs': includingEnd,
         'pointer-events-none': planState.hasEditingPlan,

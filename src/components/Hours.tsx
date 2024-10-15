@@ -9,11 +9,11 @@ export default function Hours() {
   const disableIncrease = hourState.hour === maxHour
 
   return (
-    <div className="y-center gap-sm">
+    <div className="y-center gap-sm" title={`每天工作${hourState.hour}小时`}>
       <div className="y-center">
         <button
           className={clsx(
-            'rotate-30 i-ph:triangle-light relative top--1.5',
+            'rotate-30 i-ph:triangle-light relative top--1.5 text-xs',
             disableDecrease ? 'text-muted/65' : 'hover:i-ph:triangle-fill',
             { 'cursor-not-allowed': disableDecrease },
           )}
@@ -31,7 +31,7 @@ export default function Hours() {
 
         <button
           className={clsx(
-            'rotate--30 i-ph:triangle-light relative top--1.5',
+            'rotate--30 i-ph:triangle-light relative top--1.5 text-xs',
             disableIncrease ? 'text-muted/65' : 'hover:i-ph:triangle-fill',
             { 'cursor-not-allowed': disableIncrease },
           )}

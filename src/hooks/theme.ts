@@ -8,13 +8,37 @@ interface ThemeState {
 }
 
 export const useTheme = create<ThemeState>((set, get) => ({
-  theme: 'dark',
+  theme: localStorage.getItem('theme') as Theme || 'dark',
   toggleTheme: () => {
     const theme = get().theme === 'dark' ? 'light' : 'dark'
-    set({ theme })
+    const isDark = theme === 'dark'
 
-    document.documentElement.classList.remove('light', 'dark')
-    document.documentElement.classList.add(theme)
-    localStorage.setItem('theme', theme)
+    if ('startViewTransition' in document) {
+      const transition = document.startViewTransition(updateTheme)
+      transition.ready.then(() => {
+        const clipPath = [
+          `polygon(100% 100%, 100% 100%, 100% 100%)`,
+          `polygon(100% 100%, -100% 100%, 100% -100%)`,
+        ]
+        document.documentElement.animate(
+          {
+            clipPath: isDark ? [...clipPath].reverse() : clipPath,
+          },
+          {
+            duration: 300,
+            easing: 'ease-in',
+            pseudoElement: isDark ? '::view-transition-old(root)' : '::view-transition-new(root)',
+          },
+        )
+      })
+    } else {
+      updateTheme()
+    }
+
+    function updateTheme() {
+      set({ theme })
+      document.documentElement.classList.toggle('dark', isDark)
+      localStorage.setItem('theme', theme)
+    }
   },
 }))

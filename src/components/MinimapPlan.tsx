@@ -24,6 +24,10 @@ export default function MinimapPlan(props: { plan: Plan }) {
   const opacity = planState.editing || planState.active ? 1 : 0.75
   const backgroundColor = useColorValue(props.plan?.color || pickColor())
 
+  const hoursDescription = `${workingDays}d (${workingHours}h)`
+  const title = [hoursDescription, props.plan.description].filter(Boolean).join(': ')
+  const description = props.plan.description || hoursDescription
+
   return (
     <motion.li
       className="y-center gap-sm"
@@ -33,17 +37,13 @@ export default function MinimapPlan(props: { plan: Plan }) {
       transition={{ duration: 0.15 }}
     >
       <button
-        className="y-center grow-1 border-l-6 border-accent rounded-xs px-xs text-sm transition-[opacity,colors]"
+        className="grow-1 truncate border-l-6 border-accent rounded-xs px-xs text-left text-sm transition-[opacity,colors]"
         style={{ backgroundColor, opacity }}
         onMouseEnter={() => planState.activePlan(props.plan.id)}
         onClick={() => scrollToDay(props.plan.start)}
+        title={title}
       >
-
-        {props.plan.description ? (
-          <span>{ props.plan.description }</span>
-        ) : (
-          <span>{workingDays}d ({workingHours}h)</span>
-        )}
+        {description}
       </button>
 
       <button

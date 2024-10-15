@@ -17,16 +17,21 @@ export default function Calendar() {
     window.addEventListener('mouseup', cancelEditPlan)
   }, [])
 
+  function loadPrev() {
+    dayState.addPrevDays()
+    containerDom.current!.scrollTop = 1
+  }
+
   return (
     <main className="h-screen flex grow-1 flex-col" onContextMenu={e => e.preventDefault()}>
       <WeekHeaders />
 
-      <div className="grow-1 of-x-hidden of-y-auto">
+      <div className="grow-1 of-x-hidden of-y-auto" ref={containerDom}>
 
         <InfiniteLoader
           name="prev"
           container={containerDom}
-          onLoad={dayState.addPrevDays}
+          onLoad={loadPrev}
         />
 
         {weeks.map(week => (

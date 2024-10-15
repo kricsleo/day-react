@@ -16,16 +16,13 @@ export default function InfiniteLoader(props: {
 
     observerManager.registerObserver('loader', {
       root: props.container.current,
-      rootMargin: '800px',
     })
-    observerManager.observe('loader', domRef.current, () => {
-      props.onLoad()
-    })
+    observerManager.observe('loader', domRef.current, props.onLoad)
 
     return () => observerManager.deleteObserver('loader')
   }, [])
 
   return (
-    <div ref={domRef} className="h-1px"></div>
+    <div ref={domRef} className="h-0.5" />
   )
 }

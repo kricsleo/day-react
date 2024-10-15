@@ -1,6 +1,7 @@
 @import './vars.css';
 @import './scrollbar.css';
 @import './reset.css';
+@import './view-transition.css';
 
 @unocss;
 

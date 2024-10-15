@@ -1,18 +1,22 @@
 import { scrollToDay } from '../utils/scroll'
 import Hours from './Hours'
 import Minimap from './Minimap'
+import Theme from './Theme'
 
-export default function Footer() {
+export default function Sidebar() {
   const today = new Date()
   const month = today.getMonth() + 1
   const date = today.getDate()
 
   return (
-    <footer className="flex flex-col items-start gap-xl p-xl pt-48">
+    <aside className="w-200 flex flex-col items-start gap-xl p-xl pt-48">
 
       <Minimap />
 
-      <hr className="my-xs mt-auto h-1 self-stretch bg-muted" />
+      <div className="relative mt-auto self-stretch">
+        <hr className="my-xs h-1 bg-muted" />
+        <Theme />
+      </div>
 
       <button
         className="center rounded-sm bg-secondary px-md py-xs text-primary text-secondary-foreground shadow-sm transition-colors hover:bg-secondary/80"
@@ -25,6 +29,7 @@ export default function Footer() {
       </button>
 
       <Hours />
-    </footer>
+
+    </aside>
   )
 }

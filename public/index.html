@@ -6,7 +6,7 @@
   <title>Days</title>
   <script>
     const theme = localStorage.getItem('theme') || 'dark'
-    document.documentElement.classList.add(theme)
+    document.documentElement.classList.toggle('dark', theme === 'dark')
   </script>
 </head>
 <body>

@@ -7,7 +7,7 @@ export default function Minimap() {
   const plans = usePlanState(useShallow(state => state.plans.slice().reverse()))
 
   return (
-    <ul className="max-h-80vh flex flex-col self-stretch gap-sm of-auto">
+    <ul className="max-h-75vh flex flex-col self-stretch gap-sm of-auto">
       <AnimatePresence>
         {plans.map(plan => (
           <MinimapPlan key={plan.id} plan={plan} />

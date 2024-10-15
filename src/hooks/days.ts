@@ -28,7 +28,7 @@ interface DayState {
   addNextDays: () => void
 }
 
-const intervalDays = 7 * 8
+const intervalDays = 7 * 20
 
 export const useDayState = create(devtools<DayState>(set => ({
   days: genInitialDays(),
@@ -60,7 +60,7 @@ export const useDayState = create(devtools<DayState>(set => ({
 })))
 
 function genInitialDays() {
-  const start = startOfWeek(subWeeks(new Date(), 1), { weekStartsOn: 1 })
+  const start = startOfWeek(subWeeks(new Date(), 2), { weekStartsOn: 1 })
   const end = addDays(start, intervalDays - 1)
   return eachDayOfInterval({ start, end }).map(dateToDay)
 }

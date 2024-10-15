@@ -57,6 +57,7 @@ export default defineConfig({
     ['x-between', 'flex justify-between'],
     ['y-center', 'flex items-center'],
     [/^expand-?(.*)$/, ([,size]) => `relative before:content-[""] before:absolute before:inset--${size || 2}`],
+    [/^wh-(.*)$/, ([, size]) => `w-${size} h-${size}`],
   ],
 
   content: {
