@@ -28,7 +28,7 @@ export function pickColor() {
 
 export function useColorVariant() {
   const theme = useTheme(state => state.theme)
-  return theme === 'dark' ? '400' : '500'
+  return theme === 'dark' ? '500' : '400'
 }
 
 export function useColorValue(color: Color) {
