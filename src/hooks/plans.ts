@@ -122,7 +122,7 @@ usePlanState.subscribe(state => [state.editingPlanId, state.editingType], ([edit
   if (!editingPlanId || !editingType) {
     document.body.style.cursor = ''
   } else {
-    document.body.style.cursor = editingType === 'range' ? 'move' : 'ew-resize'
+    document.body.style.cursor = editingType === 'range' ? 'grabbing' : 'ew-resize'
   }
 }, { equalityFn: shallow })
 
