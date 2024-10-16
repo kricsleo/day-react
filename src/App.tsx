@@ -1,4 +1,5 @@
 import Calendar from './components/Calendar'
+import MarkContextMenu from './components/MarkContextMenu'
 import Sidebar from './components/Sidebar'
 import '@unocss/reset/tailwind.css'
 import '@fontsource/geist-sans/400.css'
@@ -9,6 +10,7 @@ const App = () => {
     <div className="flex">
       <Calendar />
       <Sidebar />
+      <MarkContextMenu />
     </div>
   )
 }

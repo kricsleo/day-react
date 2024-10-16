@@ -13,3 +13,7 @@ export function pick<T extends Record<string, any>, K extends keyof T>(obj: T, k
     return acc
   }, {} as Pick<T, K>)
 }
+
+export function uuid() {
+  return Math.random().toString(36).slice(2)
+}

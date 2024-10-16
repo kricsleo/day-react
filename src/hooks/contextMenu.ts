@@ -15,7 +15,7 @@ interface ContextMenuState {
 export const useContextMenuState = create(devtools<ContextMenuState>(set => ({
   planId: null,
   rowId: null,
-  open(planId: string, rowId: string) {
+  open(planId, rowId) {
     set({ planId, rowId })
   },
   close() {
@@ -23,7 +23,7 @@ export const useContextMenuState = create(devtools<ContextMenuState>(set => ({
   },
 
   style: {},
-  setStyle(style: MotionStyle) {
+  setStyle(style) {
     set({ style })
   },
 })))

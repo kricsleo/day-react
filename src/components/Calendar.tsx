@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useDayState } from '../hooks/days'
+import { useMarkState } from '../hooks/marks'
 import { usePlanState } from '../hooks/plans'
 import { chunk } from '../utils/utils'
 import CalenderRow from './CalendarRow'
@@ -13,8 +14,12 @@ export default function Calendar() {
   const weeks = chunk(dayState.days, 7)
 
   const cancelEditPlan = usePlanState(state => state.cancelEditPlan)
+  const cancelEditMark = useMarkState(state => state.cancelEditMark)
   useEffect(() => {
-    window.addEventListener('mouseup', cancelEditPlan)
+    window.addEventListener('mouseup', () => {
+      cancelEditPlan()
+      cancelEditMark()
+    })
   }, [])
 
   function loadPrev() {

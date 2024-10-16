@@ -48,7 +48,6 @@ export default function CalendarPlan(props: {
     if (!contextMenuState.planId) {
       planState.activePlan(props.planId)
     }
-    // contextMenuState.close()
   }
   function handleMouseLeave() {
     if (!planState.active || contextMenuState.planId === props.planId) {
@@ -148,7 +147,7 @@ export default function CalendarPlan(props: {
   return (
     <motion.div
       ref={domRef}
-      className={cls('y-center absolute transition-[colors,opacity] cursor-grab px-xs select-none ws-nowrap', {
+      className={cls('y-center absolute transition-[colors,opacity] px-xs select-none ws-nowrap', {
         'rounded-l-xs border-l-8 border-accent': includingStart,
         'rounded-r-xs': includingEnd,
         'pointer-events-none': planState.hasEditingPlan,

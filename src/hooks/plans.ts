@@ -11,6 +11,7 @@ import {
 import { create } from 'zustand'
 import { devtools, subscribeWithSelector } from 'zustand/middleware'
 import { shallow } from 'zustand/shallow'
+import { uuid } from '../utils/utils'
 import { type Color, pickColor } from './colors'
 
 export interface Plan {
@@ -45,17 +46,17 @@ interface PlanState {
 
 export const usePlanState = create(devtools(subscribeWithSelector<PlanState>((set, get) => ({
   plans: [],
-  createPlan(start: Date) {
+  createPlan(start) {
     const plan = createPlan(start)
     const plans = sortPlans([...get().plans, plan])
     set({ plans })
     return plan
   },
-  updatePlan(planId: string, plan: Partial<Plan>) {
+  updatePlan(planId, plan) {
     const plans = get().plans.map(p => (p.id === planId ? { ...p, ...plan } : p))
     set({ plans })
   },
-  deletePlan(planId: string) {
+  deletePlan(planId) {
     const plans = sortPlans(get().plans.filter(p => p.id !== planId))
     set({ plans })
   },
@@ -64,7 +65,7 @@ export const usePlanState = create(devtools(subscribeWithSelector<PlanState>((se
   editingType: null,
   editingDirection: null,
   editingArchorDate: null,
-  editPlan(planId: string, editingType: EditingType, date: Date) {
+  editPlan(planId, editingType, date) {
     const { plans } = get()
     const plan = plans.find(p => p.id === planId)!
     const editingArchorDate = editingType === 'start' ? plan.end
@@ -77,7 +78,7 @@ export const usePlanState = create(devtools(subscribeWithSelector<PlanState>((se
   cancelEditPlan() {
     set({ editingPlanId: null, editingType: null, editingDirection: null, editingArchorDate: null })
   },
-  updateEditingPlanDate(nextArchorDate: Date) {
+  updateEditingPlanDate(nextArchorDate) {
     const { plans, editingPlanId, editingType, editingArchorDate: editingPlanArchorDate } = get()
     const plan = plans.find(p => p.id === editingPlanId)
 
@@ -110,7 +111,7 @@ export const usePlanState = create(devtools(subscribeWithSelector<PlanState>((se
   },
 
   activePlanId: null,
-  activePlan(planId: string) {
+  activePlan(planId) {
     set({ activePlanId: planId })
   },
   deactivePlan() {
@@ -127,9 +128,8 @@ usePlanState.subscribe(state => [state.editingPlanId, state.editingType], ([edit
 }, { equalityFn: shallow })
 
 function createPlan(start: Date, end?: Date): Plan {
-  const id = Math.random().toString(36).slice(2)
   return {
-    id,
+    id: uuid(),
     order: 0,
     start,
     end: end || start,

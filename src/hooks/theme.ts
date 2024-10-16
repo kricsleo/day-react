@@ -4,13 +4,15 @@ type Theme = 'light' | 'dark'
 
 interface ThemeState {
   theme: Theme
-  toggleTheme: () => void
+  toggleTheme: (theme?: Theme) => void
 }
 
 export const useTheme = create<ThemeState>((set, get) => ({
-  theme: localStorage.getItem('theme') as Theme || 'dark',
-  toggleTheme: () => {
-    const theme = get().theme === 'dark' ? 'light' : 'dark'
+  theme: localStorage.getItem('theme') as Theme
+    || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
+  toggleTheme: (_theme?: Theme) => {
+    const theme = _theme || (get().theme === 'dark' ? 'light' : 'dark')
+    console.log('theme', theme)
     const isDark = theme === 'dark'
 
     if ('startViewTransition' in document) {
@@ -42,3 +44,8 @@ export const useTheme = create<ThemeState>((set, get) => ({
     }
   },
 }))
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+  const theme = e.matches ? 'dark' : 'light'
+  useTheme.getState().toggleTheme(theme)
+})

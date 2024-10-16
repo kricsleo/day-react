@@ -8,7 +8,7 @@ import { useDayState } from '../hooks/days'
 import { usePlanState } from '../hooks/plans'
 import CalendarDay from './CalendarDay'
 import CalendarPlan from './CalendarPlan'
-import ContextMenu from './ContextMenu'
+import PlanContextMenu from './PlanContextMenu'
 
 export default function CalenderRow(props: {
   rowId: string
@@ -52,7 +52,7 @@ export default function CalenderRow(props: {
         ))}
       </AnimatePresence>
 
-      <ContextMenu rowId={props.rowId} />
+      <PlanContextMenu rowId={props.rowId} />
     </div>
   )
 }

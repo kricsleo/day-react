@@ -3,11 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="/favicon.png"></link>
-  <title>Days</title>
+  <meta name="content" content="Schedule your working days.">
+
+  <link rel="icon" type="image/png" href="/calendar3.png"></link>
+  <title>Day</title>
 
   <script>
-    const theme = localStorage.getItem('theme') || 'dark'
+    const theme = localStorage.getItem('theme') 
+      || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
     document.documentElement.classList.toggle('dark', theme === 'dark')
   </script>
 </head>
