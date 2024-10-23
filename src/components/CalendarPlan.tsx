@@ -150,7 +150,7 @@ export default function CalendarPlan(props: {
     >
       {includingStart && (
         <>
-          <button
+          <div
             className="absolute left--15 top--25% h-150% w-35 cursor-ew-resize"
             onMouseDown={handlePlanStartMouseDown}
           />
@@ -162,7 +162,7 @@ export default function CalendarPlan(props: {
       )}
 
       {includingEnd && (
-        <button
+        <div
           className="absolute right--15 top--25% h-150% w-35 cursor-ew-resize"
           onMouseDown={handlePlanEndMouseDown}
         />
