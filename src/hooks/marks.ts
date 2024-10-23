@@ -55,7 +55,7 @@ export const useMarkState = create(persist(subscribeWithSelector(combine({
     }))
   },
 }))), {
-  name: 'marks',
+  name: 'marks/v3',
 }))
 
 useMarkState.subscribe(state => state.editingMarkId, editingMarkId => {

@@ -98,7 +98,7 @@ export const usePlanState = create(persist(subscribeWithSelector(combine({
   activePlan: (planId: string) => set({ activePlanId: planId }),
   deactivePlan: () => set({ activePlanId: null }),
 }))), {
-  name: 'plans',
+  name: 'plans/v3',
 }))
 
 usePlanState.subscribe(state => [state.editingPlanId, state.editingType], ([editingPlanId, editingType]) => {
