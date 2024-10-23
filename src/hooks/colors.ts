@@ -6,7 +6,6 @@ const colors = [
   'orange',
   'amber',
   'yellow',
-  'lime',
   'green',
   'emerald',
   'teal',
@@ -18,17 +17,14 @@ const colors = [
   'purple',
   'pink',
   'rose',
+  'neutral',
 ] satisfies Array<keyof typeof colorPalette>
 
 export type Color = typeof colors[number]
 
-export function pickColor() {
-  return colors[Math.floor(Math.random() * colors.length)]!
-}
-
 export function useColorVariant() {
   const theme = useTheme(state => state.theme)
-  return theme === 'dark' ? '500' : '400'
+  return theme === 'dark' ? '600' : '400'
 }
 
 export function useColorValue(color: Color) {
@@ -39,4 +35,9 @@ export function useColorValue(color: Color) {
 export function useColors() {
   const variant = useColorVariant()
   return colors.map(color => ({ color, value: colorPalette[color][variant] }))
+}
+
+export function pickColor() {
+  // Random color, except the `neutral` color
+  return colors[Math.floor(Math.random() * (colors.length - 1))]!
 }

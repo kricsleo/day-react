@@ -1,25 +1,32 @@
-import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { useContextMenuState } from '../hooks/contextMenu'
+import { usePlanContextState } from '../hooks/planContext'
 import { usePlanState } from '../hooks/plans'
-import { isEnter, isEsc } from '../utils/events'
+import { isEnterKey, isEscKey } from '../utils/events'
 import { pick } from '../utils/utils'
 import ColorPalette from './ColorPalette'
-import ContextMenu from './ContextMenu'
+import Context from './Context'
 
-export default function PlanContextMenu(props: { rowId: string }) {
-  const contextMenuState = useContextMenuState()
+export default function PlanContext() {
+  const planContextState = usePlanContextState()
 
   const planState = usePlanState(useShallow(state => ({
-    plan: state.plans.find(plan => plan.id === contextMenuState.planId),
+    plan: state.plans.find(plan => plan.id === planContextState.planId),
     ...pick(state, ['deletePlan', 'updatePlan']),
   })))
 
-  const opened = Boolean(planState.plan) && props.rowId === contextMenuState.rowId
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (isEscKey(e)) {
+        planContextState.close()
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  })
 
   function handleDeletePlan() {
-    contextMenuState.close()
+    planContextState.close()
 
     if (!planState.plan) {
       return
@@ -28,34 +35,25 @@ export default function PlanContextMenu(props: { rowId: string }) {
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
-    if (isEnter(e)) {
-      contextMenuState.close()
+    if (isEnterKey(e)) {
+      planContextState.close()
     }
   }
 
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (isEsc(e)) {
-        contextMenuState.close()
-      }
-    }
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  })
-
   return (
-    <ContextMenu
-      name="plan-context-menu"
-      style={contextMenuState.style}
-      opened={opened}
-      onClose={contextMenuState.close}
+    <Context
+      name="plan-context"
+      opened={Boolean(planContextState.planRowId)}
+      portalDomId={planContextState.planRowId}
+      style={planContextState.style}
+      onClose={planContextState.close}
     >
       { planState.plan ? (
         <>
           <input
             autoFocus={!planState.plan.description}
             className="w-full px-sm py-xs text-md"
-            placeholder="计划做些什么..."
+            placeholder="添加计划名称..."
             value={planState.plan.description}
             onChange={e => planState.updatePlan(planState.plan!.id, { description: e.target.value })}
             onKeyDown={handleKeyDown}
@@ -79,6 +77,6 @@ export default function PlanContextMenu(props: { rowId: string }) {
           </button>
         </>
       ) : null}
-    </ContextMenu>
+    </Context>
   )
 }

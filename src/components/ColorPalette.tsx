@@ -12,7 +12,7 @@ export default function ColorPalette(props: {
       {colors.map(color => (
         <motion.button
           key={color.value}
-          className="relative justify-self-center rounded p-sm transition-colors hover:bg-accent/65"
+          className="relative justify-self-center rounded p-sm transition-colors hover:bg-accent/45"
           onClick={e => {
             e.stopPropagation()
             props.onChange(color.color)

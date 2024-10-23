@@ -1,29 +1,12 @@
 import type { Day } from '../hooks/days'
 import clsx from 'clsx'
 import { getDate, getMonth } from 'date-fns'
-import { motion } from 'framer-motion'
 import { useShallow } from 'zustand/shallow'
-import { useContextMenuState } from '../hooks/contextMenu'
-import { useMarkContextMenuState } from '../hooks/markContextMenu'
-import { type Mark, useMarkState } from '../hooks/marks'
+import { useMarkState } from '../hooks/marks'
 import { usePlanState } from '../hooks/plans'
-import { isLeftClick } from '../utils/events'
+import { isLeftMouse } from '../utils/events'
 import { pick } from '../utils/utils'
-
-const icons = [
-  'i-ph:check-circle-fill',
-  'i-ph:calendar-fill',
-  'i-ph:clock-fill',
-  'i-ph:list-checks-fill',
-  'i-ph:note-pencil-fill',
-  'i-ph:bookmark-simple-fill',
-  'i-ph:flag-fill',
-  'i-ph:star-fill',
-  'i-ph:bell-fill',
-  'i-ph:pushpin-fill',
-]
-
-const randomIcon = () => icons[Math.floor(Math.random() * icons.length)]
+import Mark from './Mark'
 
 export default function CalendarDay(props: { day: Day }) {
   const planState = usePlanState(useShallow(state => pick(
@@ -31,27 +14,18 @@ export default function CalendarDay(props: { day: Day }) {
     ['createPlan', 'updateEditingPlanDate', 'editPlan'],
   )))
 
-  const contextMenuState = useContextMenuState(useShallow(state => ({
-    close: state.close,
-    opened: Boolean(state.planId),
-  })))
-
   const markState = useMarkState(useShallow(state =>
-    pick(state, ['addMark', 'editMark', 'updateEditingMark'])),
+    pick(state, ['addMark', 'updateEditingMark'])),
   )
   const marks = useMarkState(useShallow(state =>
     state.marks.filter(mark => mark.dayId === props.day.id),
   ))
 
-  const openMarkContextMenu = useMarkContextMenuState(state => state.open)
-
   const date = getDate(props.day.date)
   const month = getMonth(props.day.date) + 1
 
   function handleMouseDown(e: React.MouseEvent) {
-    contextMenuState.close()
-
-    if (!isLeftClick(e) || contextMenuState.opened) {
+    if (!isLeftMouse(e)) {
       return
     }
 
@@ -64,22 +38,8 @@ export default function CalendarDay(props: { day: Day }) {
     markState.updateEditingMark(props.day.id)
   }
 
-  function handleContextMenu() {
+  function handleContext() {
     markState.addMark(props.day.id)
-  }
-
-  function handleMarkContextMenu(e: React.MouseEvent, mark: Mark) {
-    e.stopPropagation()
-    openMarkContextMenu(mark.id, e)
-  }
-
-  function handleMarkMouseDown(e: React.MouseEvent, mark: Mark) {
-    e.stopPropagation()
-    if (!isLeftClick(e)) {
-      return
-    }
-
-    markState.editMark(mark.id)
   }
 
   return (
@@ -90,10 +50,10 @@ export default function CalendarDay(props: { day: Day }) {
       })}
       onMouseDown={handleMouseDown}
       onMouseEnter={onMouseEnter}
-      onContextMenu={handleContextMenu}
+      onContextMenu={handleContext}
     >
-      <div className="grid grid-cols-3 py-sm">
-        <span className={clsx('col-start-2 center px-sm self-start select-none', {
+      <div className="x-center py-sm">
+        <span className={clsx('center px-sm self-start shrink-0', {
           'bg-primary text-primary rounded-sm': props.day.today,
         })}
         >
@@ -103,17 +63,9 @@ export default function CalendarDay(props: { day: Day }) {
         </span>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-md px-sm">
+      <div className="center flex-wrap gap-sm px-sm">
         {marks.map(mark => (
-          <motion.span
-            key={mark.id}
-            layoutId={mark.id}
-            transition={{ duration: 0.15 }}
-            className={clsx('relative shrink-0 rounded-full text-teal', randomIcon())}
-            title={mark.description}
-            onMouseDown={e => handleMarkMouseDown(e, mark)}
-            onContextMenu={e => handleMarkContextMenu(e, mark)}
-          />
+          <Mark key={mark.id} markId={mark.id} />
         ))}
       </div>
     </div>

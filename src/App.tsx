@@ -1,5 +1,7 @@
 import Calendar from './components/Calendar'
-import MarkContextMenu from './components/MarkContextMenu'
+import Header from './components/Header'
+import MarkContext from './components/MarkContext'
+import PlanContext from './components/PlanContext'
 import Sidebar from './components/Sidebar'
 import '@unocss/reset/tailwind.css'
 import '@fontsource/geist-sans/400.css'
@@ -7,10 +9,12 @@ import './styles/index.css'
 
 const App = () => {
   return (
-    <div className="flex">
+    <div>
+      {/* <Header /> */}
       <Calendar />
-      <Sidebar />
-      <MarkContextMenu />
+      {/* <Sidebar /> */}
+      <MarkContext />
+      <PlanContext />
     </div>
   )
 }

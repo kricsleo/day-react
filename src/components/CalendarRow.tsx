@@ -8,7 +8,6 @@ import { useDayState } from '../hooks/days'
 import { usePlanState } from '../hooks/plans'
 import CalendarDay from './CalendarDay'
 import CalendarPlan from './CalendarPlan'
-import PlanContextMenu from './PlanContextMenu'
 
 export default function CalenderRow(props: {
   rowId: string
@@ -30,7 +29,7 @@ export default function CalenderRow(props: {
       }, plan, { inclusive: true }))
   }))
   const maxPlanOrder = plans.reduce((max, plan) => Math.max(max, plan.order), 0)
-  const height = Math.max(160, maxPlanOrder * 20 + 120)
+  const height = Math.max(1 * 24 + 100, maxPlanOrder * 24 + 100)
 
   return (
     <div className="calendar-row relative">
@@ -44,15 +43,13 @@ export default function CalenderRow(props: {
         {plans.map(plan => (
           <CalendarPlan
             key={plan.id}
-            rowId={props.rowId}
+            planRowId={`${plan.id}-${props.rowId}`}
             planId={plan.id}
             startDate={props.startDate}
             endDate={props.endDate}
           />
         ))}
       </AnimatePresence>
-
-      <PlanContextMenu rowId={props.rowId} />
     </div>
   )
 }

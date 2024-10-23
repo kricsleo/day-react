@@ -1,15 +1,13 @@
 import { create } from 'zustand'
+import { combine } from 'zustand/middleware'
 
 type Theme = 'light' | 'dark'
 
-interface ThemeState {
-  theme: Theme
-  toggleTheme: (theme?: Theme) => void
-}
-
-export const useTheme = create<ThemeState>((set, get) => ({
+export const useTheme = create(combine({
   theme: localStorage.getItem('theme') as Theme
     || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
+
+}, (set, get) => ({
   toggleTheme: (_theme?: Theme) => {
     const theme = _theme || (get().theme === 'dark' ? 'light' : 'dark')
     console.log('theme', theme)
@@ -43,7 +41,7 @@ export const useTheme = create<ThemeState>((set, get) => ({
       localStorage.setItem('theme', theme)
     }
   },
-}))
+})))
 
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
   const theme = e.matches ? 'dark' : 'light'

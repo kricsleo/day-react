@@ -9,7 +9,7 @@ import {
   subWeeks,
 } from 'date-fns'
 import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { combine } from 'zustand/middleware'
 import { findChineseDay, isWorkingDay } from '../utils/chinese-days'
 
 export interface Day {
@@ -21,24 +21,18 @@ export interface Day {
   description?: string
 }
 
-interface DayState {
-  days: Day[]
+const INTERVAL_DAYS = 7 * 20
 
-  addPrevDays: () => void
-  addNextDays: () => void
-}
-
-const intervalDays = 7 * 20
-
-export const useDayState = create(devtools<DayState>(set => ({
+export const useDayState = create(combine({
   days: genInitialDays(),
 
+}, set => ({
   addPrevDays: () => set(state => {
     const _firstDate = state.days[0]?.date
     const firstDate = _firstDate || nextMonday(new Date())
 
     const prevDays = eachDayOfInterval({
-      start: subDays(firstDate, intervalDays),
+      start: subDays(firstDate, INTERVAL_DAYS),
       end: subDays(firstDate, 1),
     }).map(dateToDay)
 
@@ -51,7 +45,7 @@ export const useDayState = create(devtools<DayState>(set => ({
 
     const nextDays = eachDayOfInterval({
       start: addDays(lastDate, 1),
-      end: addDays(lastDate, intervalDays),
+      end: addDays(lastDate, INTERVAL_DAYS),
     }).map(dateToDay)
 
     return { days: [...state.days, ...nextDays] }
@@ -61,7 +55,7 @@ export const useDayState = create(devtools<DayState>(set => ({
 
 function genInitialDays() {
   const start = startOfWeek(subWeeks(new Date(), 2), { weekStartsOn: 1 })
-  const end = addDays(start, intervalDays - 1)
+  const end = addDays(start, INTERVAL_DAYS - 1)
   return eachDayOfInterval({ start, end }).map(dateToDay)
 }
 

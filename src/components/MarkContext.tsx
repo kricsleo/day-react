@@ -1,25 +1,21 @@
 import { useShallow } from 'zustand/shallow'
-import { useDayState } from '../hooks/days'
-import { useMarkContextMenuState } from '../hooks/markContextMenu'
+import { useMarkContextState } from '../hooks/markContext'
 import { useMarkState } from '../hooks/marks'
-import { isEnter } from '../utils/events'
+import { isEnterKey } from '../utils/events'
 import { pick } from '../utils/utils'
-import ContextMenu from './ContextMenu'
+import ColorPalette from './ColorPalette'
+import Context from './Context'
 
-export default function MarkContextMenu() {
-  const markContextMenuState = useMarkContextMenuState()
+export default function MarkContext() {
+  const markContextState = useMarkContextState()
 
   const markState = useMarkState(useShallow(state => ({
     ...pick(state, ['deleteMark', 'updateMark']),
-    mark: state.marks.find(mark => mark.id === markContextMenuState.markId),
+    mark: state.marks.find(mark => mark.id === markContextState.markId),
   })))
 
-  const dayId = useDayState(state => state.days.find(day => day.id === markState.mark?.dayId)?.id)
-
-  const opened = Boolean(markContextMenuState.markId)
-
   function handleDeleteMark() {
-    markContextMenuState.close()
+    markContextState.close()
 
     if (!markState.mark) {
       return
@@ -28,28 +24,34 @@ export default function MarkContextMenu() {
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
-    if (isEnter(e)) {
-      markContextMenuState.close()
+    if (isEnterKey(e)) {
+      markContextState.close()
     }
   }
 
   return (
-    <ContextMenu
-      name="mark-content-menu"
-      portalDomId={dayId}
-      style={markContextMenuState.style}
-      opened={opened}
-      onClose={markContextMenuState.close}
+    <Context
+      name="mark-content"
+      opened={Boolean(markContextState.markId)}
+      portalDomId={markContextState.markId}
+      style={markContextState.style}
+      onClose={markContextState.close}
     >
       {markState.mark ? (
         <>
           <input
             autoFocus={!markState.mark.description}
             className="w-full px-sm py-xs text-md"
-            placeholder="标记..."
+            placeholder="添加标记名称..."
             value={markState.mark.description}
             onChange={e => markState.updateMark(markState.mark!.id, { description: e.target.value })}
             onKeyDown={handleKeyDown}
+          />
+          <hr className="mx--xs my-xs h-1 bg-muted" />
+
+          <ColorPalette
+            color={markState.mark.color}
+            onChange={color => markState.updateMark(markState.mark!.id, { color })}
           />
 
           <hr className="mx--xs my-xs h-1 bg-muted" />
@@ -63,6 +65,6 @@ export default function MarkContextMenu() {
           </button>
         </>
       ) : null}
-    </ContextMenu>
+    </Context>
   )
 }

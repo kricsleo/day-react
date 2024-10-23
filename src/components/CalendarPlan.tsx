@@ -1,18 +1,18 @@
 import cls from 'clsx'
-import { addDays, differenceInDays, eachDayOfInterval, isAfter, isBefore, isSameDay } from 'date-fns'
+import { addDays, differenceInDays, eachDayOfInterval, isAfter, isBefore } from 'date-fns'
 import { motion } from 'framer-motion'
 import { useRef } from 'react'
 import { useShallow } from 'zustand/shallow'
 import { pickColor, useColorValue } from '../hooks/colors'
-import { useContextMenuState } from '../hooks/contextMenu'
 import { useHourState } from '../hooks/hours'
+import { usePlanContextState } from '../hooks/planContext'
 import { usePlanState } from '../hooks/plans'
 import { isWorkingDay } from '../utils/chinese-days'
-import { isLeftClick } from '../utils/events'
+import { isLeftMouse } from '../utils/events'
 import { pick } from '../utils/utils'
 
 export default function CalendarPlan(props: {
-  rowId: string
+  planRowId: string
   planId: string
   startDate: Date
   endDate: Date
@@ -25,9 +25,8 @@ export default function CalendarPlan(props: {
     ...pick(state, ['editingDirection', 'editPlan', 'cancelEditPlan', 'activePlan', 'deactivePlan']),
   })))
 
-  const contextMenuState = useContextMenuState(useShallow(state => ({
-    opened: Boolean(state.planId),
-    ...pick(state, ['planId', 'open', 'close', 'setStyle']),
+  const planContextState = usePlanContextState(useShallow(state => ({
+    ...pick(state, ['planId', 'open', 'close']),
   })))
 
   const hoursPerDay = useHourState(state => state.hour)
@@ -45,12 +44,12 @@ export default function CalendarPlan(props: {
   const workingHours = workingDays * hoursPerDay
 
   function handleMouseEnter() {
-    if (!contextMenuState.planId) {
+    if (!planContextState.planId) {
       planState.activePlan(props.planId)
     }
   }
   function handleMouseLeave() {
-    if (!planState.active || contextMenuState.planId === props.planId) {
+    if (!planState.active || planContextState.planId === props.planId) {
       return
     }
     planState.deactivePlan()
@@ -71,7 +70,7 @@ export default function CalendarPlan(props: {
     ? `${(differenceInDays(props.endDate, planState.plan.end) / 7 + 0.01) * 100}%`
     : `0`
 
-  const opacity = planState.editing || planState.active ? 1 : 0.85
+  const opacity = planState.editing || planState.active ? 1 : 1
   const initial = planState.editingDirection === 'before'
     ? { left: '100%', right: '0', bottom }
     : planState.editingDirection === 'after'
@@ -93,31 +92,26 @@ export default function CalendarPlan(props: {
   }
 
   function handlePlanMouseDown(e: React.MouseEvent) {
-    if (!isLeftClick(e)) {
+    if (!isLeftMouse(e)) {
       return
     }
-    if (contextMenuState.opened) {
-      contextMenuState.close()
-      planState.cancelEditPlan()
-      planState.deactivePlan()
-    } else {
-      const rowDomRect = e.currentTarget.parentElement!.getBoundingClientRect()
-      const dayOffset = Math.floor(((e.pageX - rowDomRect.left) / rowDomRect.width) * 7)
-      const currentDate = addDays(props.startDate, dayOffset)
-      planState.editPlan(planState.plan!.id, 'range', currentDate)
-    }
+
+    const rowDomRect = e.currentTarget.parentElement!.getBoundingClientRect()
+    const dayOffset = Math.floor(((e.pageX - rowDomRect.left) / rowDomRect.width) * 7)
+    const currentDate = addDays(props.startDate, dayOffset)
+    planState.editPlan(planState.plan!.id, 'range', currentDate)
   }
 
   function handlePlanStartMouseDown(e: React.MouseEvent<HTMLElement>) {
     e.stopPropagation()
     planState.editPlan(planState.plan!.id, 'start', planState.plan!.end)
-    contextMenuState.close()
+    planContextState.close()
   }
 
   function handlePlanEndMouseDown(e: React.MouseEvent<HTMLElement>) {
     e.stopPropagation()
     planState.editPlan(planState.plan!.id, 'end', planState.plan!.start)
-    contextMenuState.close()
+    planContextState.close()
   }
 
   function handleLayoutAnimationStart() {
@@ -128,26 +122,16 @@ export default function CalendarPlan(props: {
     domRef.current?.classList.remove('calendar-plan--animating')
   }
 
-  function handlePlanContextMenu(e: React.MouseEvent<HTMLDivElement>) {
-    e.preventDefault()
-
-    const preferRight = e.clientX < window.innerWidth - 500
-    const preferBottom = e.clientY < window.innerHeight - 500
-
+  function handlePlanContext(e: React.MouseEvent<HTMLDivElement>) {
     planState.activePlan(props.planId)
-    contextMenuState.setStyle({
-      top: preferBottom ? `${e.currentTarget.offsetTop}px` : 'auto',
-      right: preferRight ? 'auto' : `${e.currentTarget.parentElement!.offsetWidth - e.nativeEvent.offsetX - e.currentTarget.offsetLeft + 20}px`,
-      left: preferRight ? `${e.currentTarget.offsetLeft + e.nativeEvent.offsetX + 20}px` : 'auto',
-      bottom: preferBottom ? 'auto' : `${e.currentTarget.parentElement!.offsetHeight - e.currentTarget.offsetTop - e.currentTarget.offsetHeight}px`,
-    })
-    contextMenuState.open(props.planId, props.rowId)
+    planContextState.open(props.planId, props.planRowId, e)
   }
 
   return (
     <motion.div
       ref={domRef}
-      className={cls('y-center absolute transition-[colors,opacity] px-xs select-none ws-nowrap', {
+      id={props.planRowId}
+      className={cls('y-center absolute transition-[colors,opacity] px-xs ws-nowrap', {
         'rounded-l-xs border-l-8 border-accent': includingStart,
         'rounded-r-xs': includingEnd,
         'pointer-events-none': planState.hasEditingPlan,
@@ -160,7 +144,7 @@ export default function CalendarPlan(props: {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onMouseDown={handlePlanMouseDown}
-      onContextMenu={handlePlanContextMenu}
+      onContextMenu={handlePlanContext}
       onLayoutAnimationStart={handleLayoutAnimationStart}
       onLayoutAnimationComplete={handleLayoutAnimationComplete}
     >
@@ -172,7 +156,7 @@ export default function CalendarPlan(props: {
           />
           <span>{workingDays}d ({workingHours}h)</span>
           {planState.plan.description ? (
-            <span>: { planState.plan.description }</span>
+            <span className="truncate">: { planState.plan.description }</span>
           ) : null}
         </>
       )}
@@ -183,7 +167,6 @@ export default function CalendarPlan(props: {
           onMouseDown={handlePlanEndMouseDown}
         />
       )}
-      <span></span>
     </motion.div>
   )
 }

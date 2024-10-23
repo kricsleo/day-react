@@ -1,49 +1,42 @@
 import { create } from 'zustand'
-import { subscribeWithSelector } from 'zustand/middleware'
+import { combine, persist, subscribeWithSelector } from 'zustand/middleware'
 import { uuid } from '../utils/utils'
+import { type Color, pickColor } from './colors'
 
 export interface Mark {
   id: string
   dayId: string
+  color: Color
   description: string
 }
 
-interface MarkState {
-  marks: Mark[]
-  addMark: (dayId: string) => Mark
-  deleteMark: (id: string) => void
-  updateMark: (id: string, mark: Partial<Mark>) => void
+export const useMarkState = create(persist(subscribeWithSelector(combine({
+  marks: [] as Mark[],
 
-  editingMarkId: string | null
-  editMark: (markId: string) => void
-  cancelEditMark: () => void
-  updateEditingMark: (dayId: string) => void
-}
+  editingMarkId: null as string | null,
 
-export const useMarkState = create(subscribeWithSelector<MarkState>((set, get) => ({
-  marks: [],
-  addMark(dayId: string) {
+}, (set, get) => ({
+  addMark: (dayId: string) => {
     const mark = createMark(dayId)
     set(state => ({ marks: [...state.marks, mark] }))
     return mark
   },
-  deleteMark(id) {
-    set(state => ({ marks: state.marks.filter(mark => mark.id !== id) }))
+
+  deleteMark: (markId: string) => {
+    set(state => ({ marks: state.marks.filter(mark => mark.id !== markId) }))
   },
-  updateMark(id, mark) {
+
+  updateMark: (markId: string, mark: Partial<Mark>) => {
     set(state => ({
-      marks: state.marks.map(m => (m.id === id ? { ...m, ...mark } : m)),
+      marks: state.marks.map(m => (m.id === markId ? { ...m, ...mark } : m)),
     }))
   },
 
-  editingMarkId: null,
-  editMark(markId) {
-    set({ editingMarkId: markId })
-  },
-  cancelEditMark() {
-    set({ editingMarkId: null })
-  },
-  updateEditingMark(dayId) {
+  editMark: (markId: string) => set({ editingMarkId: markId }),
+
+  cancelEditMark: () => set({ editingMarkId: null }),
+
+  updateEditingMark: (dayId: string) => {
     const { editingMarkId, marks } = get()
     if (!editingMarkId) {
       return
@@ -61,7 +54,9 @@ export const useMarkState = create(subscribeWithSelector<MarkState>((set, get) =
       }),
     }))
   },
-})))
+}))), {
+  name: 'marks',
+}))
 
 useMarkState.subscribe(state => state.editingMarkId, editingMarkId => {
   document.body.style.cursor = editingMarkId ? 'grabbing' : ''
@@ -71,6 +66,7 @@ function createMark(dayId: string): Mark {
   return {
     id: uuid(),
     dayId,
+    color: pickColor(),
     description: '',
   }
 }
