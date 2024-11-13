@@ -4,21 +4,21 @@ import glob from 'tiny-glob'
 
 interface RawChineseHoliday {
   name: string
-  range: [string, string?]
-  type: 'workingday' | 'holiday'
+  date: string
+  isOffDay: boolean
 }
 
 async function main() {
-  const files = await glob('./chinese-holidays-data/data/2*.json', {
+  const files = await glob('./holiday-cn/202*.json', {
     absolute: true,
   })
 
   const holidays: ChineseDay[] = []
   for await (const file of files) {
-    const days: RawChineseHoliday[] = (await import(file)).default
+    const days: RawChineseHoliday[] = (await import(file)).default.days
     for (const day of days) {
-      const name = day.type === 'holiday' ? day.name : `${day.name}补班`
-      holidays.push([name, day.range, day.type])
+      const name = day.isOffDay ? day.name : `${day.name}补班`
+      holidays.push([name, day.date, day.isOffDay])
     }
   }
 

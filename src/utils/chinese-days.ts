@@ -1,28 +1,25 @@
-import { isWeekend, isWithinInterval } from 'date-fns'
+import { isSameDay, isWeekend } from 'date-fns'
 import chineseHolidays from '../chinese-holidays.json'
 
 export type ChineseDay = [
   name: string,
-  range: [startDate: string, endDate?: string],
-  type: 'workingday' | 'holiday',
+  date: string,
+  isHoliday: boolean,
 ]
 
 export function isChineseHoliday(date: Date): boolean {
   const holiday = findChineseDay(date)
-  return holiday?.[2] === 'holiday'
+  return Boolean(holiday && holiday[2])
 }
 
 export function isChineseWorkingDay(date: Date): boolean {
   const holiday = findChineseDay(date)
-  return holiday?.[2] === 'workingday'
+  return Boolean(holiday && !holiday[2])
 }
 
 export function findChineseDay(date: Date): ChineseDay | undefined {
-  return (chineseHolidays as ChineseDay[]).find(holiday => isWithinInterval(date, {
-    // `T00:00` converts date to local timezone
-    start: new Date(`${holiday[1][0]}T00:00`),
-    end: new Date(`${holiday[1][1] || holiday[1][0]}T00:00`),
-  }))
+  return (chineseHolidays as ChineseDay[])
+    .find(holiday => isSameDay(date, new Date(`${holiday[1]}T00:00`)))
 }
 
 export function isWorkingDay(date: Date): boolean {
