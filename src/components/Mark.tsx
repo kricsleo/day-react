@@ -39,6 +39,7 @@ export default function Mark(props: { markId: string }) {
   return markState.mark ? (
     <motion.span
       id={props.markId}
+      layout="position"
       layoutId={props.markId}
       transition={{ duration: 0.15 }}
       className="relative h-18 max-w-full min-w-18 center shrink-0 cursor-default rounded-full shadow-lg transition-colors"
