@@ -41,7 +41,7 @@ export default function MarkContext() {
         <>
           <input
             autoFocus={!markState.mark.description}
-            className="w-full px-sm py-xs text-md"
+            className="w-full px-sm py-xs"
             placeholder="添加标记名称..."
             value={markState.mark.description}
             onChange={e => markState.updateMark(markState.mark!.id, { description: e.target.value })}

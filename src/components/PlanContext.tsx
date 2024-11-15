@@ -52,7 +52,7 @@ export default function PlanContext() {
         <>
           <input
             autoFocus={!planState.plan.description}
-            className="w-full px-sm py-xs text-md"
+            className="w-full px-sm py-xs"
             placeholder="添加计划名称..."
             value={planState.plan.description}
             onChange={e => planState.updatePlan(planState.plan!.id, { description: e.target.value })}

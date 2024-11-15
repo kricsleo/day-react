@@ -24,7 +24,7 @@ export type Color = typeof colors[number]
 
 export function useColorVariant() {
   const theme = useTheme(state => state.theme)
-  return theme === 'dark' ? '600' : '400'
+  return theme === 'dark' ? '500' : '400'
 }
 
 export function useColorValue(color: Color) {

@@ -63,14 +63,14 @@ export default function CalendarPlan(props: {
   const bottom = `${Math.max(planState.plan.order * (height + gap)) + 8}px`
 
   const left = includingStart
-    ? `${differenceInDays(planState.plan.start, props.startDate) / 7 * 100}%`
+    ? `${(differenceInDays(planState.plan.start, props.startDate) / 7 + 0.001) * 100}%`
     : '0'
   const right = includingEnd
     // Leave a little gap for the end
     ? `${(differenceInDays(props.endDate, planState.plan.end) / 7 + 0.01) * 100}%`
     : `0`
 
-  const opacity = planState.editing || planState.active ? 1 : 0.85
+  const opacity = planState.editing || planState.active ? 1 : 0.95
   const initial = planState.editingDirection === 'before'
     ? { left: '100%', right: '0', bottom }
     : planState.editingDirection === 'after'
@@ -132,7 +132,7 @@ export default function CalendarPlan(props: {
       ref={domRef}
       id={props.planRowId}
       className={cls('y-center absolute transition-[colors,opacity] px-xs ws-nowrap', {
-        'rounded-l-xs border-l-8 border-accent': includingStart,
+        'rounded-l-xs border-l-4 border-accent': includingStart,
         'rounded-r-xs': includingEnd,
         'pointer-events-none': planState.hasEditingPlan,
       })}
