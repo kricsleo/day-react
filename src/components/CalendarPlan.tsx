@@ -58,8 +58,8 @@ export default function CalendarPlan(props: {
   const includingStart = !isAfter(props.startDate, planState.plan.start)
   const includingEnd = !isBefore(props.endDate, planState.plan.end)
 
-  const height = 20
-  const gap = 4
+  const height = 24
+  const gap = 2
   const bottom = `${Math.max(planState.plan.order * (height + gap)) + 8}px`
 
   const left = includingStart
@@ -131,8 +131,8 @@ export default function CalendarPlan(props: {
     <motion.div
       ref={domRef}
       id={props.planRowId}
-      className={cls('y-center absolute transition-[colors,opacity] px-xs ws-nowrap', {
-        'rounded-l-xs border-l-4 border-accent': includingStart,
+      className={cls('y-center absolute transition-[colors,opacity] px-xs ws-nowrap text-primary', {
+        'rounded-l-xs border-l-6 border-accent': includingStart,
         'rounded-r-xs': includingEnd,
         'pointer-events-none': planState.hasEditingPlan,
       })}
