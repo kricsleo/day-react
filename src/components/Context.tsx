@@ -44,7 +44,7 @@ export default function Context(props: {
         <motion.div
           ref={ref}
           layoutId={props.name}
-          className="absolute z-9 w-270 border rounded bg-popover p-xs shadow-md"
+          className="absolute z-9 w-270 border rounded bg-popover p-xs text-white shadow-md"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           style={props.style}
