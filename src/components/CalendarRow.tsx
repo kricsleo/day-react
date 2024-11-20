@@ -29,7 +29,7 @@ export default function CalenderRow(props: {
       }, plan, { inclusive: true }))
   }))
   const maxPlanOrder = plans.reduce((max, plan) => Math.max(max, plan.order), 0)
-  const height = Math.max(1 * 26 + 100, maxPlanOrder * 26 + 100)
+  const height = Math.max(1 * 24 + 100, maxPlanOrder * 24 + 100)
 
   return (
     <div className="calendar-row relative">

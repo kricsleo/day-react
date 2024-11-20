@@ -1,6 +1,6 @@
 import type { Day } from '../hooks/days'
 import clsx from 'clsx'
-import { getDate, getMonth } from 'date-fns'
+import { getDate, getMonth, isBefore } from 'date-fns'
 import { useShallow } from 'zustand/shallow'
 import { useMarkState } from '../hooks/marks'
 import { usePlanState } from '../hooks/plans'
@@ -55,6 +55,7 @@ export default function CalendarDay(props: { day: Day }) {
       <div className="x-center py-sm">
         <span className={clsx('center px-sm self-start shrink-0', {
           'bg-primary text-primary rounded-sm': props.day.today,
+          'text-muted': isBefore(props.day.date, new Date()),
         })}
         >
           <span className="ws-nowrap">{month}月{date}</span>

@@ -3,10 +3,12 @@ import { useTheme } from './theme'
 
 const colors = [
   'red',
-  'orange',
-  'amber',
-  'yellow',
-  'green',
+  'pink',
+  'rose',
+  // 'orange',
+  // 'amber',
+  // 'yellow',
+  // 'green',
   'emerald',
   'teal',
   'cyan',
@@ -15,8 +17,6 @@ const colors = [
   'indigo',
   'violet',
   'purple',
-  'pink',
-  'rose',
   'neutral',
 ] satisfies Array<keyof typeof colorPalette>
 

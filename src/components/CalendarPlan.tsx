@@ -1,5 +1,5 @@
 import cls from 'clsx'
-import { addDays, differenceInDays, eachDayOfInterval, isAfter, isBefore } from 'date-fns'
+import { addDays, differenceInDays, eachDayOfInterval, isAfter, isBefore, startOfToday } from 'date-fns'
 import { motion } from 'framer-motion'
 import { useRef } from 'react'
 import { useShallow } from 'zustand/shallow'
@@ -58,7 +58,7 @@ export default function CalendarPlan(props: {
   const includingStart = !isAfter(props.startDate, planState.plan.start)
   const includingEnd = !isBefore(props.endDate, planState.plan.end)
 
-  const height = 24
+  const height = 22
   const gap = 2
   const bottom = `${Math.max(planState.plan.order * (height + gap)) + 8}px`
 
@@ -131,8 +131,8 @@ export default function CalendarPlan(props: {
     <motion.div
       ref={domRef}
       id={props.planRowId}
-      className={cls('y-center absolute transition-[colors,opacity] px-xs ws-nowrap text-primary', {
-        'rounded-l-xs border-l-6 border-accent': includingStart,
+      className={cls('y-center absolute transition-[colors,opacity] px-xs ws-nowrap text-15', {
+        'rounded-l-xs border-l-5 border-accent': includingStart,
         'rounded-r-xs': includingEnd,
         'pointer-events-none': planState.hasEditingPlan,
       })}
