@@ -72,6 +72,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.3.4
         version: 4.3.4(vite@5.4.15(@types/node@22.13.14)(terser@5.39.0))
+      '@vitejs/plugin-vue':
+        specifier: ^5.2.3
+        version: 5.2.3(vite@5.4.15(@types/node@22.13.14)(terser@5.39.0))(vue@3.5.13(typescript@5.8.2))
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -1169,6 +1172,13 @@ packages:
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       vite: ^4.2.0 || ^5.0.0 || ^6.0.0
+
+  '@vitejs/plugin-vue@5.2.3':
+    resolution: {integrity: sha512-IYSLEQj4LgZZuoVpdSUCw3dIynTWQgPlaRP6iAvMle4My0HdYwr5g5wQAfwOeHQBmYwEkqF70nRpSilr6PoUDg==}
+    engines: {node: ^18.0.0 || >=20.0.0}
+    peerDependencies:
+      vite: ^5.0.0 || ^6.0.0
+      vue: ^3.2.25
 
   '@vitest/eslint-plugin@1.1.38':
     resolution: {integrity: sha512-KcOTZyVz8RiM5HyriiDVrP1CyBGuhRxle+lBsmSs6NTJEO/8dKVAq+f5vQzHj1/Kc7bYXSDO6yBe62Zx0t5iaw==}
@@ -3812,6 +3822,11 @@ snapshots:
       vite: 5.4.15(@types/node@22.13.14)(terser@5.39.0)
     transitivePeerDependencies:
       - supports-color
+
+  '@vitejs/plugin-vue@5.2.3(vite@5.4.15(@types/node@22.13.14)(terser@5.39.0))(vue@3.5.13(typescript@5.8.2))':
+    dependencies:
+      vite: 5.4.15(@types/node@22.13.14)(terser@5.39.0)
+      vue: 3.5.13(typescript@5.8.2)
 
   '@vitest/eslint-plugin@1.1.38(@typescript-eslint/utils@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.2))(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.2)':
     dependencies:
