@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, type MotionStyle } from 'framer-motion'
+import { AnimatePresence, motion, type MotionStyle } from 'motion/react'
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { isEscKey } from '../utils/events'

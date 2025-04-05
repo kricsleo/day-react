@@ -20,8 +20,9 @@ export default defineConfig({
       // minSize: 30 * 1024,
       // maxSize: 50 * 1024,
       forceSplitting: {
-        'framer-motion': /framer-motion/,
-        'react': /react/,
+        // forceSplitting for motion seems not working
+        motion: /motion/,
+        react: /react/,
       },
     },
   },

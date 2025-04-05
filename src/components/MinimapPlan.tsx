@@ -1,5 +1,5 @@
 import { eachDayOfInterval } from 'date-fns'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { useShallow } from 'zustand/shallow'
 import { pickColor, useColorValue } from '../hooks/colors'
 import { useHourState } from '../hooks/hours'

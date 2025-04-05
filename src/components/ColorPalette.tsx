@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { type Color, useColors } from '../hooks/colors'
 
 export default function ColorPalette(props: {

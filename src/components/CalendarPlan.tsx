@@ -1,6 +1,6 @@
 import cls from 'clsx'
-import { addDays, differenceInDays, eachDayOfInterval, isAfter, isBefore, startOfToday } from 'date-fns'
-import { motion } from 'framer-motion'
+import { addDays, differenceInDays, eachDayOfInterval, isAfter, isBefore } from 'date-fns'
+import { motion } from 'motion/react'
 import { useRef } from 'react'
 import { useShallow } from 'zustand/shallow'
 import { pickColor, useColorValue } from '../hooks/colors'

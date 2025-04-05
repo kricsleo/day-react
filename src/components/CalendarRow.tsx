@@ -2,7 +2,7 @@ import {
   areIntervalsOverlapping,
   isWithinInterval,
 } from 'date-fns'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 import { useShallow } from 'zustand/react/shallow'
 import { useDayState } from '../hooks/days'
 import { usePlanState } from '../hooks/plans'

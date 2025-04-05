@@ -1,4 +1,4 @@
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 import { useShallow } from 'zustand/shallow'
 import { usePlanState } from '../hooks/plans'
 import MinimapPlan from './MinimapPlan'

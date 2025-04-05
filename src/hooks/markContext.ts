@@ -1,4 +1,4 @@
-import type { MotionStyle } from 'framer-motion'
+import type { MotionStyle } from 'motion/react'
 import type React from 'react'
 import { create } from 'zustand'
 import { combine } from 'zustand/middleware'
