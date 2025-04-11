@@ -1,6 +1,6 @@
 import type { ChineseDay } from '../src/utils/chinese-days'
 import fs from 'node:fs/promises'
-import glob from 'tiny-glob'
+import { glob } from 'tinyglobby'
 
 interface RawChineseHoliday {
   name: string

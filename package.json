@@ -36,7 +36,7 @@
     "@unocss/webpack": "^66.0.0",
     "@vitejs/plugin-react": "^4.3.4",
     "dayjs": "^1.11.13",
-    "tiny-glob": "^0.2.9",
+    "tinyglobby": "^0.2.12",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3",
     "unocss": "^66.0.0",
