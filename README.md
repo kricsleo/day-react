@@ -1,5 +1,5 @@
 <h3 align="center">
-  Schedule working days <sup>React</sup>
+  Schedule working days <sup><small>React</sup><small>
 </h3>
 
 <p align="center">
