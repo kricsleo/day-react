@@ -33,17 +33,17 @@
     "@types/node": "^25.0.3",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@unocss/eslint-plugin": "^66.5.10",
-    "@unocss/postcss": "^66.5.10",
-    "@unocss/preset-rem-to-px": "^66.5.10",
-    "@unocss/reset": "^66.5.10",
-    "@unocss/webpack": "^66.5.10",
+    "@unocss/eslint-plugin": "^66.5.12",
+    "@unocss/postcss": "^66.5.12",
+    "@unocss/preset-rem-to-px": "^66.5.12",
+    "@unocss/reset": "^66.5.12",
+    "@unocss/webpack": "^66.5.12",
     "@vitejs/plugin-react": "^5.1.2",
     "dayjs": "^1.11.19",
     "tinyglobby": "^0.2.15",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "unocss": "^66.5.10",
+    "unocss": "^66.5.12",
     "vite": "^7.3.0"
   }
 }
