@@ -59,8 +59,8 @@ export default function CalendarDay(props: { day: Day }) {
         })}
         >
           <span className="ws-nowrap">{month}月{date}</span>
-          {props.day.today && <span className="ws-nowrap text-xs">&nbsp;(今日)</span>}
           {props.day.description && <span className="ws-nowrap vertical-baseline text-sm">&nbsp;({props.day.description})</span>}
+          {props.day.today && <span className="ws-nowrap text-xs">&nbsp;(今日)</span>}
         </span>
       </div>
 
