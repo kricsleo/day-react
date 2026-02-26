@@ -3,5 +3,5 @@
 </h3>
 
 <p align="center">
-  <a href="day.kric.cc">day.kric.cc</a>
+  <a href="https://day.kric.cc">day.kric.cc</a>
 </p>
