@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@10.30.2",
+  "packageManager": "pnpm@10.30.3",
   "engines": {
     "node": ">=22"
   },
@@ -25,25 +25,25 @@
     "zustand": "5.0.1"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^7.5.0",
+    "@antfu/eslint-config": "^7.6.1",
     "@iconify-json/ph": "^1.2.2",
     "@rsbuild/core": "1.0.17",
     "@rsbuild/plugin-react": "^1.4.5",
     "@total-typescript/tsconfig": "^1.0.4",
-    "@types/node": "^25.3.0",
+    "@types/node": "^25.3.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@unocss/eslint-plugin": "^66.6.0",
-    "@unocss/postcss": "^66.6.0",
-    "@unocss/preset-rem-to-px": "^66.6.0",
-    "@unocss/reset": "^66.6.0",
-    "@unocss/webpack": "^66.6.0",
+    "@unocss/eslint-plugin": "^66.6.2",
+    "@unocss/postcss": "^66.6.2",
+    "@unocss/preset-rem-to-px": "^66.6.2",
+    "@unocss/reset": "^66.6.2",
+    "@unocss/webpack": "^66.6.2",
     "@vitejs/plugin-react": "^5.1.4",
     "dayjs": "^1.11.19",
     "tinyglobby": "^0.2.15",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "unocss": "^66.6.0",
+    "unocss": "^66.6.2",
     "vite": "^7.3.1"
   }
 }
