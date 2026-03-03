@@ -1,3 +1,22 @@
+export interface UpdateSettingsParams {
+  RetryLImit: number
+  IsActive: boolean
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import cls from 'clsx'
 import { addDays, differenceInDays, eachDayOfInterval, isAfter, isBefore } from 'date-fns'
 import { motion } from 'motion/react'
